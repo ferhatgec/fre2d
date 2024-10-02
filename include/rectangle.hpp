@@ -1,0 +1,59 @@
+// MIT License
+//
+// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Distributed under the terms of the MIT License.
+//
+#pragma once
+
+#include "drawable.hpp"
+#include <memory>
+#include <array>
+
+namespace fre2d {
+class Rectangle : public Drawable {
+public:
+  Rectangle() noexcept;
+
+  explicit Rectangle(
+    GLsizei width,
+    GLsizei height,
+    const glm::vec2& position,
+    const std::array<glm::vec4, 4>& color,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  explicit Rectangle(
+    GLsizei width,
+    GLsizei height,
+    const glm::vec2& position,
+    const glm::vec4& color,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  ~Rectangle() override = default;
+
+  void initialize_rectangle(
+    GLsizei width,
+    GLsizei height,
+    const glm::vec2& position,
+    const std::array<glm::vec4, 4>& color,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void initialize_rectangle(
+    GLsizei width,
+    GLsizei height,
+    const glm::vec2& position,
+    const glm::vec4& color,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void draw(const Shader &shader, const std::unique_ptr<Camera>& camera) noexcept override;
+private:
+  std::vector<Vertex> _vertices;
+};
+} // namespace fre2d

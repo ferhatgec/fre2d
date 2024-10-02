@@ -1,0 +1,95 @@
+// MIT License
+//
+// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Distributed under the terms of the MIT License.
+//
+#pragma once
+
+#include "drawable.hpp"
+#include <glad/glad.h>
+
+namespace fre2d {
+class Polygon : public Drawable {
+public:
+  // specify width and height, then it will automatically apply scale to vertices,
+  // so that would make changing size relatively easy.
+  // alternatively you can store width, height;
+  // then apply them to your vertices and pass by Polygon(vertices, position).
+  explicit Polygon(
+    GLsizei width,
+    GLsizei height,
+    const std::vector<Vertex>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  );
+
+  explicit Polygon(
+    GLsizei width,
+    GLsizei height,
+    const std::vector<Vertex2>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  );
+
+  // width and height is 1, so your vertices have to use pixel coordinates.
+  explicit Polygon(
+    const std::vector<Vertex>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  );
+
+  explicit Polygon(
+    const std::vector<Vertex2>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  );
+
+  ~Polygon() override = default;
+
+  void initialize_polygon(
+    GLsizei width,
+    GLsizei height,
+    const std::vector<Vertex>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void initialize_polygon(
+    GLsizei width,
+    GLsizei height,
+    const std::vector<Vertex2>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void initialize_polygon(
+    const std::vector<Vertex>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void initialize_polygon(
+    const std::vector<Vertex2>& vertices,
+    const glm::vec2& position,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+  ) noexcept;
+
+  void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept override;
+private:
+  [[nodiscard]] static std::vector<Vertex>
+  _apply_tex_coords(const std::vector<Vertex2>& vertices) noexcept;
+
+  [[nodiscard]] static std::tuple<GLfloat, GLfloat, GLfloat, GLfloat>
+  _get_aabb(const std::vector<Vertex2>& vertices) noexcept;
+
+  std::size_t _count;
+};
+} // namespace fre2d
