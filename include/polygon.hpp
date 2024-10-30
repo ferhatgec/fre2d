@@ -11,6 +11,7 @@
 namespace fre2d {
 class Polygon : public Drawable {
 public:
+  Polygon() noexcept = default;
   // specify width and height, then it will automatically apply scale to vertices,
   // so that would make changing size relatively easy.
   // alternatively you can store width, height;

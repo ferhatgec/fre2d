@@ -1,7 +1,23 @@
 cmake_minimum_required(VERSION 3.12)
 project(fre2d_lib)
 include(FetchContent)
-option(BUILD_EXAMPLE "Build example to see if fre2d works correctly" ON)
+option(FRE2D_BUILD_EXAMPLE "Build example to see if fre2d works correctly" ON)
+option(FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME "Checks for package updates every build" ON)
+option(FRE2D_DO_NOT_CHECK_LIBRARIES "Disable checks for FetchContent packages" OFF)
+
+# do not check updates every time.
+set(FETCHCONTENT_UPDATES_DISCONNECTED_glfw ${FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME})
+set(FETCHCONTENT_UPDATES_DISCONNECTED_freetype ${FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME})
+set(FETCHCONTENT_UPDATES_DISCONNECTED_glm ${FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME})
+set(FETCHCONTENT_UPDATES_DISCONNECTED_stb ${FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME})
+set(FETCHCONTENT_UPDATES_DISCONNECTED_colorized ${FRE2D_DO_NOT_CHECK_UPDATES_EVERY_TIME})
+
+set(FETCHCONTENT_FULLY_DISCONNECTED_glfw ${FRE2D_DO_NOT_CHECK_LIBRARIES})
+set(FETCHCONTENT_FULLY_DISCONNECTED_freetype ${FRE2D_DO_NOT_CHECK_LIBRARIES})
+set(FETCHCONTENT_FULLY_DISCONNECTED_glm ${FRE2D_DO_NOT_CHECK_LIBRARIES})
+set(FETCHCONTENT_FULLY_DISCONNECTED_stb ${FRE2D_DO_NOT_CHECK_LIBRARIES})
+set(FETCHCONTENT_FULLY_DISCONNECTED_colorized ${FRE2D_DO_NOT_CHECK_LIBRARIES})
+
 FetchContent_Declare(
   glfw
   GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -10,6 +26,7 @@ FetchContent_Declare(
   # since we include headers of it
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw
 )
+
 FetchContent_Declare(
   freetype
   GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
@@ -61,7 +78,7 @@ add_library(fre2d_lib ${SOURCE_FILES}
 target_include_directories(fre2d_lib PRIVATE ${INCLUDE_PATHS})
 target_link_libraries(fre2d_lib PRIVATE glfw freetype OpenGL::GL)
 
-if(BUILD_EXAMPLE)
+if(FRE2D_BUILD_EXAMPLE)
   set_property(GLOBAL PROPERTY FRE2D_INCLUDE_PATHS ${INCLUDE_PATHS})
   set_property(GLOBAL PROPERTY FRE2D_SOURCE_FILES ${SOURCE_FILES})
   add_subdirectory("example")

@@ -2,6 +2,7 @@
 #include <framebuffer.hpp>
 #include <polygon.hpp>
 #include <rectangle.hpp>
+#include <circle.hpp>
 #include <renderer.hpp>
 #include <label.hpp>
 #include <GLFW/glfw3.h>
@@ -91,13 +92,22 @@ int main() {
   );
 
   // create already rotated rectangle
-  Rectangle x(
+  Circle x(
       300,
       300,
       glm::vec2(0.f, 0.f),
       {1.f, 1.f, 1.f, 1.f},
+      detail::circle::default_thickness,
       tex,
       std::numbers::pi_v<float> / 3.f
+  );
+
+  Circle ring(
+      300,
+      250,
+      glm::vec2{-150.f, -150.f},
+      {1.f, 0.f, 1.f, 0.5f},
+      0.3f
   );
 
   // initialize font backend
@@ -108,6 +118,7 @@ int main() {
 
   // load default text shaders
   Shader text_shader(detail::label::default_vertex, detail::label::default_fragment);
+  Shader circle_shader(detail::circle::default_vertex, detail::circle::default_fragment);
 
   // create label; you can change colors of each vertex.
   // or just set one vec4. for more advanced things; you can use custom shaders.
@@ -143,22 +154,22 @@ int main() {
     // move label with I    keys
     //                J K L
     if(glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-      label.set_position(label.get_position() + glm::vec2{0.f, velocity});
+      x.set_position(x.get_position() + glm::vec2{0.f, velocity});
 
     if(glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-      label.set_position(label.get_position() - glm::vec2{0.f, velocity});
+      x.set_position(x.get_position() - glm::vec2{0.f, velocity});
 
     if(glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-      label.set_position(label.get_position() - glm::vec2{velocity, 0.f});
+      x.set_position(x.get_position() - glm::vec2{velocity, 0.f});
 
     if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-      label.set_position(label.get_position() + glm::vec2{velocity, 0.f});
+      x.set_position(x.get_position() + glm::vec2{velocity, 0.f});
 
     window_key_process(window);
 
     // automatically bind and unbind framebuffer; this can be added to
     // other classes too; which guarantees to unbind in the end.
-    fb->call([&label, &pol, &x, &fb, &default_shader, &text_shader] {
+    fb->call([&label, &pol, &x, &fb, &default_shader, &text_shader, &circle_shader, &ring] {
       // clear current framebuffer (might be default too)
       fb->clear_color(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -172,7 +183,8 @@ int main() {
       label.set_rotation(static_cast<GLfloat>(glfwGetTime()));
 
       // draw objects (TODO: no batch calls for now)
-      x.draw(default_shader, renderer.get_camera());
+      x.draw(circle_shader, renderer.get_camera());
+      ring.draw(circle_shader, renderer.get_camera());
       pol.draw(default_shader, renderer.get_camera());
       label.draw(text_shader, renderer.get_camera());
     });

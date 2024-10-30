@@ -14,10 +14,10 @@ namespace detail::camera {
 static constexpr GLfloat default_width { 800.f };
 static constexpr GLfloat default_height { 600.f };
 static constexpr glm::vec3 rotation_axis { 0.f, 0.f, 1.f };
-static constexpr glm::vec3 empty_vec3 { 0.f, 0.f, 0.f }; // used for compare position vector
-static constexpr glm::vec3 default_position { 0.f, 0.f, 0.f };
+static constexpr glm::vec3 empty_vec3 { 0.f, 0.f, 1.f }; // used for compare position vector
+static constexpr glm::vec3 default_position { 0.f, 0.f, 1.f };
 static constexpr glm::vec3 front_vec { -rotation_axis };
-static constexpr glm::vec3 up_vec { 0.f, 1.f, 0.f };
+static constexpr glm::vec3 up_vec { 0.f, 1.f, 1.f };
 } // namespace fre2d::detail::camera
 
 class Camera {

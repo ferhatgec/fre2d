@@ -109,21 +109,24 @@ void Drawable::initialize_drawable(const glm::vec3& scale,
 }
 
 // sets shader uniforms
-void Drawable::before_draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept {
+void Drawable::before_draw(const Shader& shader,
+                           const std::unique_ptr<Camera>& camera) noexcept {
   this->get_mesh().get_vao().bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
   shader.set_float_mat4x4("View", camera->get_view_matrix());
   shader.set_float_mat4x4("Projection", camera->get_projection_matrix());
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
-
+  this->before_draw_custom(shader, camera);
   shader.set_int("TextureSampler", 0);
   // no texture given
-  if(!this->get_mesh().get_texture().has_value()) {
+  if (!this->get_mesh().get_texture().has_value()) {
     Texture::get_default_texture().bind(0);
   } else {
     this->get_mesh().get_texture()->bind(0);
   }
   this->get_mesh().get_vao().unbind();
 }
+
+void Drawable::before_draw_custom(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept {}
 } // namespace fre2d

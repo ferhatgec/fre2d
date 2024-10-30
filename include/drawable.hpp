@@ -56,6 +56,7 @@ public:
 
   virtual void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept = 0;
   virtual void before_draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept; // set uniforms, including camera matrices
+  virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept;
 protected:
   glm::vec2 _position;
   glm::vec3 _scale; // normally in 2D space you don't need z dimension but i added it anyway.

@@ -10,7 +10,7 @@
 
 namespace fre2d {
 Camera::Camera(GLfloat width, GLfloat height) noexcept
-    : _position{0.f, 0.f, 0.f}, _zoom_factor{1.f}, _width{width},
+    : _position{0.f, 0.f, 1.f}, _zoom_factor{1.f}, _width{width},
       _height{height} {
   this->update_projection_matrix();
 }
@@ -20,7 +20,7 @@ void Camera::resize(GLfloat width, GLfloat height) noexcept {
   if(detail::nearly_equals(this->_width, width) &&
      detail::nearly_equals(this->_height, height)) {
     return;
-     }
+  }
   this->_width = width;
   this->_height = height;
   this->update_projection_matrix();
@@ -66,7 +66,7 @@ void Camera::rotate_camera(GLfloat radians) noexcept {
     this->_position,
     this->_position + detail::camera::front_vec,
     detail::camera::up_vec
-  ), glm::vec3(this->_zoom_factor, this->_zoom_factor, 0.f));
+  ), glm::vec3(this->_zoom_factor, this->_zoom_factor, 1.f));
 }
 
 [[nodiscard]] const glm::vec3& Camera::get_camera_position() const noexcept {
