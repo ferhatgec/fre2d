@@ -4,13 +4,12 @@
 ## features:
 * Font rendering via FreeType
 * Custom framebuffer support
-* Built-in orthographic camera... That's it.
-* Uses DSA and non-DSA APIs using OpenGL 4.5.
+* Built-in orthographic camera.
+* Uses DSA and non-DSA APIs using OpenGL 4.5... That's it.
 
 ## TODO (high priority-):
 * Batching support.
 * Filled primitives.
-* Circle.
 * Optimizations.
 * More DSA; eliminate unnecessary binds.
 * 2D point light source.
