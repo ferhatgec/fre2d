@@ -65,8 +65,9 @@ add_library(fre2d_lib ${SOURCE_FILES}
 target_include_directories(fre2d_lib PRIVATE ${INCLUDE_PATHS})
 target_link_libraries(fre2d_lib PRIVATE freetype OpenGL::GL)
 
+set_property(GLOBAL PROPERTY FRE2D_INCLUDE_PATHS ${INCLUDE_PATHS})
+set_property(GLOBAL PROPERTY FRE2D_SOURCE_FILES ${SOURCE_FILES})
+
 if(FRE2D_BUILD_EXAMPLE)
-  set_property(GLOBAL PROPERTY FRE2D_INCLUDE_PATHS ${INCLUDE_PATHS})
-  set_property(GLOBAL PROPERTY FRE2D_SOURCE_FILES ${SOURCE_FILES})
   add_subdirectory("example")
 endif()
