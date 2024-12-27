@@ -10,34 +10,86 @@
 #include "../include/helper_funcs.hpp"
 
 namespace fre2d {
-Label::Label() noexcept : _text{""} {}
-
-Label::Label(const Font &font, const char *text, const glm::vec2 &position,
-             const glm::vec4 &color, GLfloat rotation_rads) noexcept {
-  this->initialize_label(font, text, position, color, rotation_rads);
+Label::Label(
+  const Font &font,
+  const char *text,
+  const glm::vec2 &position,
+  const glm::vec4 &color,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
+  this->initialize_label(
+    font,
+    text,
+    position,
+    color,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-Label::Label(const Font &font, const char *text, const glm::vec2 &position,
-             const std::array<glm::vec4, 6> &colors,
-             GLfloat rotation_rads) noexcept {
-  this->initialize_label(font, text, position, colors, rotation_rads);
+Label::Label(
+  const Font &font,
+  const char *text,
+  const glm::vec2 &position,
+  const std::array<glm::vec4, 6> &colors,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
+  this->initialize_label(
+    font,
+    text,
+    position,
+    colors,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
 Label::~Label() {}
 
-void Label::initialize_label(const Font &font, const char *text,
-                             const glm::vec2 &position, const glm::vec4 &color,
-                             GLfloat rotation_rads) noexcept {
+void Label::initialize_label(
+  const Font &font,
+  const char *text,
+  const glm::vec2 &position,
+  const glm::vec4 &color,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->_colors = std::array<glm::vec4, 6> {color, color, color, color, color, color};
-  this->_initialize_fields_other_than_color(font, text, position, rotation_rads);
+  this->_initialize_fields_other_than_color(
+    font,
+    text,
+    position,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-void Label::initialize_label(const Font &font, const char *text,
-                             const glm::vec2 &position,
-                             const std::array<glm::vec4, 6> &colors,
-                             GLfloat rotation_rads) noexcept {
+void Label::initialize_label(
+  const Font &font,
+  const char *text,
+  const glm::vec2 &position,
+  const std::array<glm::vec4, 6> &colors,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->_colors = colors;
-  this->_initialize_fields_other_than_color(font, text, position, rotation_rads);
+  this->_initialize_fields_other_than_color(
+    font,
+    text,
+    position,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
 // TODO: actually it's pretty straightforward to use Mesh class here.
@@ -49,10 +101,10 @@ void Label::draw(const Shader &shader,
   glActiveTexture(GL_TEXTURE0);
   for (const auto &c : this->_text) {
     const auto &character = this->_font._char_map[c];
-    float xpos = pos.x + character.bearing.x;
-    float ypos = pos.y - (character.size.y - character.bearing.y);
-    float w = character.size.x;
-    float h = character.size.y;
+    float xpos = pos.x + static_cast<float>(character.bearing.x);
+    float ypos = pos.y - static_cast<float>(character.size.y - character.bearing.y);
+    const auto w = static_cast<float>(character.size.x);
+    const auto h = static_cast<float>(character.size.y);
     // use one color for every vertex.
     std::array<Vertex, 6> vertices;
 
@@ -95,6 +147,8 @@ void Label::before_draw(const Shader &shader,
   shader.set_float_mat4x4("Model", this->get_model_matrix());
   shader.set_float_mat4x4("View", camera->get_view_matrix());
   shader.set_float_mat4x4("Projection", camera->get_projection_matrix());
+  shader.set_bool("FlipVertically", this->_flip_vertically);
+  shader.set_bool("FlipHorizontally", this->_flip_horizontally);
   // no different color per vertex
   if (this->_colors.index() == 1) {
     shader.set_float_vec4("TextColor", std::get<1>(this->_colors));
@@ -107,12 +161,21 @@ void Label::before_draw(const Shader &shader,
   return this->_text;
 }
 
-void Label::_initialize_fields_other_than_color(const Font &font, const char *text, const glm::vec2 &position, GLfloat rotation_rads) noexcept {
+void Label::_initialize_fields_other_than_color(
+  const Font &font,
+  const char *text,
+  const glm::vec2 &position,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->_scale = {1.f, 1.f, 0.f};
   this->_font = font;
   this->_text = text;
   this->_position = position;
   this->_rotation_rads = rotation_rads;
+  this->_flip_vertically = flip_vertically;
+  this->_flip_horizontally = flip_horizontally;
 
   this->_bbox_w = 0;
   this->_bbox_h = 0;

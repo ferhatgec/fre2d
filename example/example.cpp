@@ -76,6 +76,18 @@ int main() {
 
   // load texture
   Texture tex("../../example/gechland.apartment.png");
+  Texture tex1("../../example/gechland.icon.png");
+
+  Rectangle rect(
+    200,
+    200,
+    glm::vec2(-200.f, 200.f),
+    detail::drawable::default_color,
+    tex1,
+    0.f,
+    true,
+    false
+  );
 
   // create polygon with given vertices.
   Polygon pol(
@@ -169,7 +181,7 @@ int main() {
 
     // automatically bind and unbind framebuffer; this can be added to
     // other classes too; which guarantees to unbind in the end.
-    fb->call([&label, &pol, &x, &fb, &default_shader, &text_shader, &circle_shader, &ring] {
+    fb->call([&] {
       // clear current framebuffer (might be default too)
       fb->clear_color(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -187,6 +199,7 @@ int main() {
       ring.draw(circle_shader, renderer.get_camera());
       pol.draw(default_shader, renderer.get_camera());
       label.draw(text_shader, renderer.get_camera());
+      rect.draw(default_shader, renderer.get_camera());
     });
 
     // with default framebuffer, this instruction won't affect current one.

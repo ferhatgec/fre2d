@@ -11,13 +11,17 @@ Circle::Circle() noexcept
   : _thickness{detail::circle::default_thickness} {
 }
 
-Circle::Circle(GLsizei width,
-               GLsizei height,
-               const glm::vec2& position,
-               const glm::vec4& color,
-               GLfloat thickness,
-               const Texture& texture,
-               GLfloat rotation_rads) noexcept {
+Circle::Circle(
+  GLsizei width,
+  GLsizei height,
+  const glm::vec2& position,
+  const glm::vec4& color,
+  GLfloat thickness,
+  const Texture& texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->initialize_circle(
     width,
     height,
@@ -25,24 +29,40 @@ Circle::Circle(GLsizei width,
     color,
     thickness,
     texture,
-    rotation_rads
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
   );
 }
 
-void Circle::initialize_circle(GLsizei width,
-                               GLsizei height,
-                               const glm::vec2& position,
-                               const glm::vec4& color,
-                               GLfloat thickness,
-                               const Texture& texture,
-                               GLfloat rotation_rads) noexcept {
-  this->initialize_rectangle(width, height, position, color, texture, rotation_rads);
+void Circle::initialize_circle(
+  GLsizei width,
+  GLsizei height,
+  const glm::vec2& position,
+  const glm::vec4& color,
+  GLfloat thickness,
+  const Texture& texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
+  this->initialize_rectangle(
+    width,
+    height,
+    position,
+    color,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
   this->_thickness = thickness;
 }
 
 void Circle::before_draw_custom(
-    const Shader& shader,
-    const std::unique_ptr<Camera>& camera) noexcept {
+  const Shader& shader,
+  const std::unique_ptr<Camera>& camera
+) noexcept {
   shader.set_float("Thickness", this->_thickness);
 }
 

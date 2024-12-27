@@ -7,66 +7,166 @@
 #include <iostream>
 
 namespace fre2d {
-Polygon::Polygon(GLsizei width, GLsizei height,
-                 const std::vector<Vertex> &vertices, const glm::vec2 &position,
-                 const Texture &texture, GLfloat rotation_rads) {
-  this->initialize_polygon(width, height, vertices, position, texture,
-                           rotation_rads);
+Polygon::Polygon(
+  GLsizei width,
+  GLsizei height,
+  const std::vector<Vertex> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) {
+  this->initialize_polygon(
+    width,
+    height,
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally);
 }
 
-Polygon::Polygon(GLsizei width, GLsizei height,
-                 const std::vector<Vertex2> &vertices,
-                 const glm::vec2 &position, const Texture &texture,
-                 GLfloat rotation_rads) {
-  this->initialize_polygon(width, height, vertices, position, texture, rotation_rads);
+Polygon::Polygon(
+  GLsizei width,
+  GLsizei height,
+  const std::vector<Vertex2> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) {
+  this->initialize_polygon(
+    width,
+    height,
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-Polygon::Polygon(const std::vector<Vertex> &vertices, const glm::vec2 &position,
-                 const Texture &texture, GLfloat rotation_rads) {
-  this->initialize_polygon(vertices, position, texture, rotation_rads);
+Polygon::Polygon(
+  const std::vector<Vertex> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) {
+  this->initialize_polygon(
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-Polygon::Polygon(const std::vector<Vertex2> &vertices,
-                 const glm::vec2 &position, const Texture &texture,
-                 GLfloat rotation_rads) {
-  this->initialize_polygon(vertices, position, texture, rotation_rads);
+Polygon::Polygon(
+  const std::vector<Vertex2> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) {
+  this->initialize_polygon(
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-void Polygon::initialize_polygon(GLsizei width, GLsizei height,
-                                 const std::vector<Vertex> &vertices,
-                                 const glm::vec2 &position,
-                                 const Texture &texture,
-                                 GLfloat rotation_rads) noexcept {
+void Polygon::initialize_polygon(
+  GLsizei width,
+  GLsizei height,
+  const std::vector<Vertex> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->_count = vertices.size();
   this->_mesh.initialize(vertices, {}, texture);
-  this->initialize_drawable(glm::vec3(width, height, 0.f), position,
-                            rotation_rads);
+  this->initialize_drawable(
+    glm::vec3(width, height, 0.f),
+    position,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-void Polygon::initialize_polygon(GLsizei width, GLsizei height,
-                                 const std::vector<Vertex2> &vertices,
-                                 const glm::vec2 &position,
-                                 const Texture &texture,
-                                 GLfloat rotation_rads) noexcept {
+void Polygon::initialize_polygon(
+  GLsizei width,
+  GLsizei height,
+  const std::vector<Vertex2> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   const auto vertices3 = Polygon::_apply_tex_coords(vertices);
   this->_count = vertices.size();
   this->_mesh.initialize(vertices3, {}, texture);
-  this->initialize_drawable(glm::vec3(width, height, 0.f), position,
-                            rotation_rads);
+  this->initialize_drawable(
+    glm::vec3(width, height, 0.f),
+    position,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-void Polygon::initialize_polygon(const std::vector<Vertex> &vertices,
-                                 const glm::vec2 &position,
-                                 const Texture &texture,
-                                 GLfloat rotation_rads) noexcept {
-  this->initialize_polygon(1, 1, vertices, position, texture, rotation_rads);
+void Polygon::initialize_polygon(
+  const std::vector<Vertex> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
+  this->initialize_polygon(
+    1,
+    1,
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
-void Polygon::initialize_polygon(const std::vector<Vertex2> &vertices,
-                                 const glm::vec2 &position,
-                                 const Texture &texture,
-                                 GLfloat rotation_rads) noexcept {
-  this->initialize_polygon(1, 1, vertices, position, texture, rotation_rads);
+void Polygon::initialize_polygon(
+  const std::vector<Vertex2> &vertices,
+  const glm::vec2 &position,
+  const Texture &texture,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
+  this->initialize_polygon(
+    1,
+    1,
+    vertices,
+    position,
+    texture,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
 void Polygon::draw(const Shader &shader,

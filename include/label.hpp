@@ -34,10 +34,16 @@ out vec2 TexCoords;
 uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
+uniform bool FlipVertically;
+uniform bool FlipHorizontally;
 
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
-  TexCoords = attr_TexCoords;
+  /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
+  TexCoords = vec2(
+    (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
+    (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
+  );
   attr_TextColor = attr_Color;
 }
 )";
@@ -63,20 +69,24 @@ void main() {
 
 class Label : public Drawable {
 public:
-  Label() noexcept;
+  Label() noexcept = default;
   Label(
     const Font& font,
     const char* text,
     const glm::vec2& position,
     const glm::vec4& color = detail::drawable::default_color,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
   Label(
     const Font& font,
     const char* text,
     const glm::vec2& position,
     const std::array<glm::vec4, 6>& colors,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
   ~Label() override;
 
@@ -85,7 +95,9 @@ public:
     const char* text,
     const glm::vec2& position,
     const glm::vec4& color = detail::drawable::default_color,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void initialize_label(
@@ -93,7 +105,9 @@ public:
     const char* text,
     const glm::vec2& position,
     const std::array<glm::vec4, 6>& colors = detail::label::default_colors,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void draw(const Shader &shader, const std::unique_ptr<Camera>& camera) noexcept override;
@@ -105,7 +119,9 @@ private:
     const Font& font,
     const char* text,
     const glm::vec2& position,
-    GLfloat rotation_rads
+    GLfloat rotation_rads,
+    bool flip_vertically,
+    bool flip_horizontally
   ) noexcept;
 
   Font _font;

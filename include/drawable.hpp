@@ -15,6 +15,8 @@ static constexpr glm::vec2 default_position { 0.f, 0.f };
 static constexpr GLfloat default_rotation_radians { 0.f };
 static constexpr glm::vec3 default_scale { 1.f, 1.f, 1.f };
 static constexpr glm::vec4 default_color { 1.f, 1.f, 1.f, 1.f };
+static constexpr bool default_flip_vertically { false };
+static constexpr bool default_flip_horizontally { false };
 } // namespace fre2d::detail::drawable
 
 class Camera;
@@ -25,7 +27,9 @@ public:
   explicit Drawable(
     const glm::vec3& scale,
     const glm::vec2& position = detail::drawable::default_position,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_vertically
   ) noexcept;
 
   virtual ~Drawable() = default;
@@ -51,7 +55,9 @@ public:
   void initialize_drawable(
     const glm::vec3& scale,
     const glm::vec2& position = detail::drawable::default_position,
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_vertically
   ) noexcept;
 
   virtual void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept = 0;
@@ -65,5 +71,6 @@ protected:
   glm::mat4 _model;
   glm::vec2 _relative_pos;
   bool _model_matrix_update_required;
+  bool _flip_vertically, _flip_horizontally;
 };
 } // namespace fre2d

@@ -15,14 +15,26 @@ Drawable::Drawable() noexcept
     _scale{detail::drawable::default_scale},
     _rotation_rads{detail::drawable::default_rotation_radians},
     _model_matrix_update_required{true},
+    _flip_vertically{detail::drawable::default_flip_vertically},
+    _flip_horizontally{detail::drawable::default_flip_horizontally},
     _relative_pos{0.f, 0.f} {
 }
 
-Drawable::Drawable(const glm::vec3& scale,
-                   const glm::vec2& position,
-                   GLfloat rotation_rads) noexcept
+Drawable::Drawable(
+  const glm::vec3& scale,
+  const glm::vec2& position,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept
   : _relative_pos{0.f, 0.f} {
-  this->initialize_drawable(scale, position, rotation_rads);
+  this->initialize_drawable(
+    scale,
+    position,
+    rotation_rads,
+    flip_vertically,
+    flip_horizontally
+  );
 }
 
 void Drawable::set_position(const glm::vec2& position) noexcept {
@@ -99,13 +111,19 @@ Drawable::get_model_matrix_custom(const glm::vec3 &scale,
   return this->_model_matrix_update_required;
 }
 
-void Drawable::initialize_drawable(const glm::vec3& scale,
-                                   const glm::vec2& position,
-                                   GLfloat rotation_rads) noexcept {
+void Drawable::initialize_drawable(
+  const glm::vec3& scale,
+  const glm::vec2& position,
+  GLfloat rotation_rads,
+  bool flip_vertically,
+  bool flip_horizontally
+) noexcept {
   this->_position = position;
   this->_rotation_rads = rotation_rads;
   this->_scale = scale;
   this->_model_matrix_update_required = true;
+  this->_flip_vertically = flip_vertically;
+  this->_flip_horizontally = flip_horizontally;
 }
 
 // sets shader uniforms
@@ -117,6 +135,8 @@ void Drawable::before_draw(const Shader& shader,
   shader.set_float_mat4x4("View", camera->get_view_matrix());
   shader.set_float_mat4x4("Projection", camera->get_projection_matrix());
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
+  shader.set_bool("FlipVertically", this->_flip_vertically);
+  shader.set_bool("FlipHorizontally", this->_flip_horizontally);
   this->before_draw_custom(shader, camera);
   shader.set_int("TextureSampler", 0);
   // no texture given

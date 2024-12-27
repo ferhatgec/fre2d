@@ -22,7 +22,9 @@ public:
     const std::vector<Vertex>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   );
 
   explicit Polygon(
@@ -31,7 +33,9 @@ public:
     const std::vector<Vertex2>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   );
 
   // width and height is 1, so your vertices have to use pixel coordinates.
@@ -39,14 +43,18 @@ public:
     const std::vector<Vertex>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   );
 
   explicit Polygon(
     const std::vector<Vertex2>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   );
 
   ~Polygon() override = default;
@@ -57,7 +65,9 @@ public:
     const std::vector<Vertex>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void initialize_polygon(
@@ -66,21 +76,27 @@ public:
     const std::vector<Vertex2>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void initialize_polygon(
     const std::vector<Vertex>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void initialize_polygon(
     const std::vector<Vertex2>& vertices,
     const glm::vec2& position,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept override;

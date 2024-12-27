@@ -24,10 +24,16 @@ out vec2 Position;
 uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
+uniform bool FlipVertically;
+uniform bool FlipHorizontally;
 
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 1.f);
-  TexCoords = attr_TexCoords.xy;
+  /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
+  TexCoords = vec2(
+    (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
+    (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
+  );
   Color = attr_Color;
   Position = attr_Position.xy;
 }
@@ -62,14 +68,17 @@ class Circle : public Rectangle {
 public:
   Circle() noexcept;
 
-  explicit Circle(GLsizei width,
-                  GLsizei height,
-                  const glm::vec2& position,
-                  const glm::vec4& color,
-                  GLfloat thickness,
-                  const Texture& texture = Texture::get_default_texture(),
-                  GLfloat rotation_rads =
-                      detail::drawable::default_rotation_radians) noexcept;
+  explicit Circle(
+    GLsizei width,
+    GLsizei height,
+    const glm::vec2& position,
+    const glm::vec4& color,
+    GLfloat thickness,
+    const Texture& texture = Texture::get_default_texture(),
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
+  ) noexcept;
 
   ~Circle() override = default;
 
@@ -80,11 +89,13 @@ public:
       const glm::vec4& color,
       GLfloat thickness,
       const Texture& texture = Texture::get_default_texture(),
-      GLfloat rotation_rads =
-          detail::drawable::default_rotation_radians) noexcept;
+      GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+      bool flip_vertically = detail::drawable::default_flip_vertically,
+      bool flip_horizontally = detail::drawable::default_flip_horizontally
+  ) noexcept;
 
   void before_draw_custom(const Shader& shader,
-                           const std::unique_ptr<Camera>& camera) noexcept override;
+                          const std::unique_ptr<Camera>& camera) noexcept override;
 
   [[nodiscard]] const GLfloat& get_thickness() const noexcept;
   void set_thickness(GLfloat thickness) noexcept;

@@ -26,10 +26,16 @@ out vec4 Color;
 uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
+uniform bool FlipVertically;
+uniform bool FlipHorizontally;
 
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 1.f);
-  TexCoords = attr_TexCoords.xy;
+  /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
+  TexCoords = vec2(
+    (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
+    (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
+  );
   Color = attr_Color;
 }
 )";

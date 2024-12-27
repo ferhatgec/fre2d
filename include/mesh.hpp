@@ -22,19 +22,23 @@ static const VertexArray default_vertex_array;
 class Mesh {
 public:
   explicit Mesh(const VertexArray& vao = detail::mesh::default_vertex_array) noexcept;
-  Mesh(const std::vector<Vertex>& vertices,
-       const std::vector<GLuint>& indices,
-       const Texture& texture = Texture::get_default_texture(),
-       const VertexArray& vao = detail::mesh::default_vertex_array) noexcept;
+  Mesh(
+    const std::vector<Vertex>& vertices,
+    const std::vector<GLuint>& indices,
+    const Texture& texture = Texture::get_default_texture(),
+    const VertexArray& vao = detail::mesh::default_vertex_array
+  ) noexcept;
 
   [[nodiscard]] const VertexArray& get_vao() const noexcept;
   [[nodiscard]] const VertexBuffer& get_vbo() const noexcept;
   [[nodiscard]] const ElementBuffer& get_ebo() const noexcept;
   [[nodiscard]] const std::optional<Texture>& get_texture() const noexcept;
 
-  void initialize(const std::vector<Vertex>& vertices,
-                  const std::vector<GLuint>& indices,
-                  const Texture& texture = Texture::get_default_texture()) noexcept;
+  void initialize(
+    const std::vector<Vertex>& vertices,
+    const std::vector<GLuint>& indices,
+    const Texture& texture = Texture::get_default_texture()
+  ) noexcept;
 private:
   // unless it's explicitly generated, we do not generate new vao per mesh.
   // but copy it.

@@ -20,7 +20,9 @@ public:
     const glm::vec2& position,
     const std::array<glm::vec4, 4>& color,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   explicit Rectangle(
@@ -29,7 +31,9 @@ public:
     const glm::vec2& position,
     const glm::vec4& color,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   ~Rectangle() override = default;
@@ -40,7 +44,9 @@ public:
     const glm::vec2& position,
     const std::array<glm::vec4, 4>& color,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void initialize_rectangle(
@@ -49,7 +55,9 @@ public:
     const glm::vec2& position,
     const glm::vec4& color,
     const Texture& texture = Texture::get_default_texture(),
-    GLfloat rotation_rads = detail::drawable::default_rotation_radians
+    GLfloat rotation_rads = detail::drawable::default_rotation_radians,
+    bool flip_vertically = detail::drawable::default_flip_vertically,
+    bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
   void draw(const Shader &shader, const std::unique_ptr<Camera>& camera) noexcept override;

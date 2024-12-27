@@ -71,9 +71,6 @@ static constexpr std::array<std::string_view, 4> severity {
   }
 }
 
-/*
-
-*/
 // maps message source codes to array indexes
 [[nodiscard]] static constexpr std::uint8_t map_gl_message_source(const GLenum& msg_src_code) noexcept {
   switch(msg_src_code) {
