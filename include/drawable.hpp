@@ -38,11 +38,15 @@ public:
   void set_position(const glm::vec2& position) noexcept;
   void set_rotation(GLfloat rotation_rads) noexcept;
   void set_scale(const glm::vec3& scale) noexcept;
+  void set_flip_vertically(bool flip_vertically) noexcept;
+  void set_flip_horizontally(bool flip_horizontally) noexcept;
 
   [[nodiscard]] const glm::vec2& get_position() const noexcept;
   [[nodiscard]] const glm::vec3& get_scale() const noexcept;
   [[nodiscard]] const GLfloat& get_rotation() const noexcept;
   [[nodiscard]] const Mesh& get_mesh() const noexcept;
+  [[nodiscard]] const bool& get_flip_vertically() const noexcept;
+  [[nodiscard]] const bool& get_flip_horizontally() const noexcept;
   [[nodiscard]] const glm::mat4& get_model_matrix() noexcept;
   [[nodiscard]] static glm::mat4 get_model_matrix_custom(
     const glm::vec3& scale,

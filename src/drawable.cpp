@@ -54,11 +54,19 @@ void Drawable::set_rotation(GLfloat rotation_rads) noexcept {
 }
 
 void Drawable::set_scale(const glm::vec3& scale) noexcept {
-  if(detail::nearly_equals(detail::drawable::default_scale, scale)) {
+  if (detail::nearly_equals(detail::drawable::default_scale, scale)) {
     return;
   }
   this->_scale = scale;
   this->_model_matrix_update_required = true;
+}
+
+void Drawable::set_flip_vertically(bool flip_vertically) noexcept {
+  this->_flip_vertically = flip_vertically;
+}
+
+void Drawable::set_flip_horizontally(bool flip_horizontally) noexcept {
+  this->_flip_horizontally = flip_horizontally;
 }
 
 [[nodiscard]] const glm::vec2& Drawable::get_position() const noexcept {
@@ -76,6 +84,14 @@ void Drawable::set_scale(const glm::vec3& scale) noexcept {
 // TODO: mesh might be uninitialized. so we need to check.
 [[nodiscard]] const Mesh& Drawable::get_mesh() const noexcept {
   return this->_mesh;
+}
+
+[[nodiscard]] const bool& Drawable::get_flip_vertically() const noexcept {
+  return this->_flip_vertically;
+}
+
+[[nodiscard]] const bool& Drawable::get_flip_horizontally() const noexcept {
+  return this->_flip_horizontally;
 }
 
 [[nodiscard]] const glm::mat4 &Drawable::get_model_matrix() noexcept {
