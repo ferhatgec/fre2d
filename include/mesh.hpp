@@ -34,6 +34,8 @@ public:
   [[nodiscard]] const ElementBuffer& get_ebo() const noexcept;
   [[nodiscard]] const std::optional<Texture>& get_texture() const noexcept;
 
+  [[nodiscard]] std::optional<Texture>& get_texture_mutable() noexcept;
+
   void initialize(
     const std::vector<Vertex>& vertices,
     const std::vector<GLuint>& indices,

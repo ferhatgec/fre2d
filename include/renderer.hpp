@@ -18,7 +18,6 @@ namespace detail::renderer {
 static constexpr GLsizei default_width { 800 };
 static constexpr GLsizei default_height { 600 };
 static constexpr auto default_tests { GL_DEPTH_TEST | GL_STENCIL_TEST };
-
 } // namespace fre2d::detail::renderer
 
 class Renderer {

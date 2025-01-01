@@ -45,6 +45,12 @@ public:
   [[nodiscard]] const glm::vec3& get_scale() const noexcept;
   [[nodiscard]] const GLfloat& get_rotation() const noexcept;
   [[nodiscard]] const Mesh& get_mesh() const noexcept;
+
+  [[nodiscard]] glm::vec2& get_position_mutable() noexcept;
+  [[nodiscard]] glm::vec3& get_scale_mutable() noexcept;
+  [[nodiscard]] GLfloat& get_rotation_mutable() noexcept;
+  [[nodiscard]] Mesh& get_mesh_mutable() noexcept;
+
   [[nodiscard]] const bool& get_flip_vertically() const noexcept;
   [[nodiscard]] const bool& get_flip_horizontally() const noexcept;
   [[nodiscard]] const glm::mat4& get_model_matrix() noexcept;

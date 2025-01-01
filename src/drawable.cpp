@@ -86,6 +86,22 @@ void Drawable::set_flip_horizontally(bool flip_horizontally) noexcept {
   return this->_mesh;
 }
 
+[[nodiscard]] glm::vec2& Drawable::get_position_mutable() noexcept {
+  return this->_position;
+}
+
+[[nodiscard]] glm::vec3& Drawable::get_scale_mutable() noexcept {
+  return this->_scale;
+}
+
+[[nodiscard]] GLfloat& Drawable::get_rotation_mutable() noexcept {
+  return this->_rotation_rads;
+}
+
+[[nodiscard]] Mesh& Drawable::get_mesh_mutable() noexcept {
+  return this->_mesh;
+}
+
 [[nodiscard]] const bool& Drawable::get_flip_vertically() const noexcept {
   return this->_flip_vertically;
 }

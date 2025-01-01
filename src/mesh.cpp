@@ -35,6 +35,10 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
   return this->_texture;
 }
 
+[[nodiscard]] std::optional<Texture>& Mesh::get_texture_mutable() noexcept {
+  return this->_texture;
+}
+
 void Mesh::initialize(const std::vector<Vertex>& vertices,
                       const std::vector<GLuint>& indices,
                       const Texture& texture) noexcept {
