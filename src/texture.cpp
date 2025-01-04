@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <texture.hpp>
@@ -15,15 +15,18 @@ Texture::Texture() noexcept
   this->_texture_id = std::make_shared<GLuint>(0);
 }
 
-Texture::Texture(GLuint texture_id) noexcept : _texture_id{std::make_shared<GLuint>(texture_id)} {}
+Texture::Texture(GLuint texture_id) noexcept
+  : _texture_id{std::make_shared<GLuint>(texture_id)} {
+}
 
-Texture::Texture(const char* file_path,
-                 GLsizei width,
-                 GLsizei height,
-                 bool use_nearest,
-                 bool use_mipmap,
-                 const WrapOptions& texture_wrap) noexcept
-  : _internal_format{detail::texture::default_internal_format} {
+Texture::Texture(
+  const char* file_path,
+  GLsizei width,
+  GLsizei height,
+  bool use_nearest,
+  bool use_mipmap,
+  const WrapOptions& texture_wrap
+) noexcept : _internal_format{detail::texture::default_internal_format} {
   this->_texture_id = std::make_shared<GLuint>(0);
   this->load(file_path, width, height, use_nearest, use_mipmap, texture_wrap);
 }

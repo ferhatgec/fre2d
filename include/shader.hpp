@@ -1,10 +1,11 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
 
+#include <memory>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
@@ -70,16 +71,22 @@ public:
   // then pass it to ctor here.
   Shader(const char* vertex_shader,
          const char* fragment_shader) noexcept;
+  Shader(GLuint program_id) noexcept;
   ~Shader() noexcept;
 
   void initialize(
     const char* vertex_shader = detail::shader::default_vertex,
     const char* fragment_shader = detail::shader::default_fragment
   ) noexcept;
+
   [[nodiscard]] const GLuint& get_program_id() const noexcept;
   [[nodiscard]] GLuint get_uniform_location(const char* uniform_name) const noexcept;
 
   void use() const noexcept;
+
+  void load(GLuint program_id) noexcept;
+  void load_override(GLuint program_id) noexcept;
+  void release() noexcept;
 
   // we might use just overload `set`, but this is more descriptive imo.
   void set_bool(const char* uniform_name, GLboolean value) const noexcept;
@@ -128,6 +135,6 @@ public:
   void set_double_mat4x3(const char* uniform_name, const glm::f64mat4x3& value) const noexcept;
   void set_double_mat4x4(const char* uniform_name, const glm::f64mat4x4& value) const noexcept;
 private:
-  GLuint _program_id;
+  std::shared_ptr<GLuint> _program_id;
 };
 } // namespace fre2d

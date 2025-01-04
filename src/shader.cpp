@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <shader.hpp>
@@ -10,18 +10,21 @@
 #define UNIFORM_LOC() this->get_uniform_location(uniform_name)
 
 namespace fre2d {
-Shader::Shader() noexcept : _program_id{0} {}
+Shader::Shader() noexcept {
+  this->_program_id = std::make_shared<GLuint>(0);
+}
 
-Shader::Shader(const char *vertex_shader,
-               const char *fragment_shader) noexcept {
+Shader::Shader(const char* vertex_shader, const char* fragment_shader) noexcept {
+  this->_program_id = std::make_shared<GLuint>(0);
   this->initialize(vertex_shader, fragment_shader);
 }
 
+Shader::Shader(GLuint program_id) noexcept
+  : _program_id{std::make_shared<GLuint>(program_id)} {
+}
+
 Shader::~Shader() noexcept {
-  // delete program when Shader going out of scope.
-  if(this->get_program_id() != 0) {
-    glDeleteProgram(this->_program_id);
-  }
+  this->release();
 }
 
 void Shader::initialize(const char* vertex_shader, const char* fragment_shader) noexcept {
@@ -53,7 +56,7 @@ void Shader::initialize(const char* vertex_shader, const char* fragment_shader) 
     // TODO: fragment shader compilation failed; use custom log, use colorized.
   }
 
-  this->_program_id = glCreateProgram();
+  *this->_program_id = glCreateProgram();
   glAttachShader(this->get_program_id(), vertex_id);
   glAttachShader(this->get_program_id(), fragment_id);
   glLinkProgram(this->get_program_id());
@@ -71,7 +74,7 @@ void Shader::initialize(const char* vertex_shader, const char* fragment_shader) 
 }
 
 [[nodiscard]] const GLuint& Shader::get_program_id() const noexcept {
-  return this->_program_id;
+  return *this->_program_id;
 }
 
 [[nodiscard]] GLuint Shader::get_uniform_location(const char* uniform_name) const noexcept {
@@ -79,7 +82,24 @@ void Shader::initialize(const char* vertex_shader, const char* fragment_shader) 
 }
 
 void Shader::use() const noexcept {
-  glUseProgram(this->_program_id);
+  glUseProgram(*this->_program_id);
+}
+
+void Shader::load(GLuint program_id) noexcept {
+  this->release();
+  this->_program_id = std::make_shared<GLuint>(program_id);
+}
+
+void Shader::load_override(GLuint program_id) noexcept {
+  this->_program_id = std::make_shared<GLuint>(program_id);
+}
+
+void Shader::release() noexcept {
+  // delete program when shader goes out of scope.
+  if(this->get_program_id() != 0 && this->_program_id.use_count() == 1) {
+    glDeleteProgram(*this->_program_id);
+    *this->_program_id = 0;
+  }
 }
 
 void Shader::set_bool(const char* uniform_name, GLboolean value) const noexcept {
