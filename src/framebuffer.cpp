@@ -43,7 +43,8 @@ void Framebuffer::initialize(GLsizei width,
                              GLsizei height,
                              bool use_default,
                              const char* default_vertex_shader,
-                             const char* default_fragment_shader) noexcept {
+                             const char* default_fragment_shader,
+                             const AdditionalTextures& additional_textures) noexcept {
   if(!this->_first_time) {
     std::cout << "error: cannot initialize same buffer more than once.\n";
     return;
@@ -60,10 +61,13 @@ void Framebuffer::initialize(GLsizei width,
   }
   // in resize(); we call initialize() so recompiling and -linking
   // shaders are not necessary.
+  // --
+  // it creates custom framebuffer.
   if(this->_shader.get_program_id() == 0) {
-    this->_shader.initialize(detail::framebuffer::default_vertex, detail::framebuffer::default_fragment);
+    this->_shader.initialize(default_vertex_shader, default_fragment_shader);
     this->_shader.use();
     this->_shader.set_int("ScreenTexture", 0);
+    this->set_additional_textures(additional_textures);
   }
 
   // create framebuffer
@@ -110,7 +114,12 @@ void Framebuffer::render_texture() noexcept {
     this->_shader.use();
     this->_fb_vao.bind();
     this->_fb_vbo.bind();
-    this->_color_buffer.bind();
+    this->_color_buffer.bind(); // slot to 0
+    // texture slots for additional textures must start from 1 to 16 or 32
+    // depending on the hardware and API support.
+    for(auto& info: this->_additional_textures) {
+      info.texture.bind(info.sampler_id);
+    }
     glDrawArrays(GL_TRIANGLES, 0, 6);
     this->_fb_vao.unbind();
   } else {
@@ -207,5 +216,21 @@ void Framebuffer::clear_color(GLfloat red, GLfloat green, GLfloat blue,
 void Framebuffer::clear_color_force(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) noexcept {
   glClearColor(red, green, blue, alpha);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void Framebuffer::set_additional_textures(const AdditionalTextures& additional_textures) noexcept {
+  if(additional_textures.empty())
+    return;
+
+  this->_additional_textures = additional_textures;
+  this->_shader.use();
+  for(const auto& info: this->_additional_textures) {
+    this->_shader.set_int(info.name, static_cast<GLint>(info.sampler_id));
+  }
+}
+
+[[nodiscard]] const AdditionalTextures&
+Framebuffer::get_additional_textures() const noexcept {
+  return this->_additional_textures;
 }
 } // namespace fre2d

@@ -61,12 +61,35 @@ int main() {
   glDebugMessageCallback(error_callback, 0);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  // we will draw everything on to this framebuffer.
+  Framebuffer custom_framebuffer(Width, Height, false);
+  Rectangle custom_framebuffer_quad(Width, Height, detail::drawable::default_position, detail::drawable::default_color);
+
+
+  constexpr auto main_framebuffer_vertex_shader = detail::framebuffer::default_vertex;
+  constexpr auto main_framebuffer_fragment_shader = R"(
+#version 450 core
+in vec2 TexCoords;
+in vec4 Color;
+out vec4 FragColor;
+uniform sampler2D ScreenTexture; // main framebuffer
+uniform sampler2D SecondaryTexture; // secondary framebuffer (custom) pass
+void main() {
+FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoords) * Color;
+}
+  )";
+
   // create custom framebuffer with depth and stencil buffers attached to it.
   // TODO: do it optional since in 2D depth and stencil buffers are not used
   // frequently. also, do not use Framebuffer and Camera separately;
   // otherwise you have to sync window size changes yourself.
-  renderer.attach_framebuffer(std::make_unique<Framebuffer>(Width, Height, false));
+  renderer.attach_framebuffer(std::make_unique<Framebuffer>(Width, Height, false, main_framebuffer_vertex_shader, main_framebuffer_fragment_shader));
   renderer.attach_camera(std::make_unique<Camera>(Width, Height));
+
+  // we attach SecondaryTexture uniform texture into main framebuffer.
+  renderer.get_framebuffer()->set_additional_textures(std::vector {
+      AdditionalTexturesInfo{1, "SecondaryTexture", custom_framebuffer.get_color_buffer()}
+  });
 
   // create shader program using default shaders
   Shader default_shader(detail::shader::default_vertex, detail::shader::default_fragment);
@@ -179,13 +202,8 @@ int main() {
 
     window_key_process(window);
 
-    // automatically bind and unbind framebuffer; this can be added to
-    // other classes too; which guarantees to unbind in the end.
-    fb->call([&] {
-      // clear current framebuffer (might be default too)
-      fb->clear_color(0.2f, 0.3f, 0.3f, 1.0f);
-
-      // change rotation of Rectangle by counter-clockwise winding
+    custom_framebuffer.call([&] {
+      custom_framebuffer.clear_color(0.f, 0.f, 0.f, 1.f);
       x.set_rotation(static_cast<GLfloat>(glfwGetTime()));
 
       // change rotation of Polygon by clockwise winding
@@ -202,7 +220,18 @@ int main() {
       rect.draw(default_shader, renderer.get_camera());
     });
 
+    custom_framebuffer.render_texture();
+
+    // automatically bind and unbind framebuffer; this can be added to
+    // other classes too; which guarantees to unbind in the end.
+    fb->call([&] {
+      // clear current framebuffer (might be default too)
+      // this will apply Mexican filter used in movies.
+      fb->clear_color(1.0f, 0.95f, 0.4f, 1.0f);
+    });
+
     // with default framebuffer, this instruction won't affect current one.
+    // if you are using custom framebuffers and not default, this call will not do anything
     fb->clear_color(1.0f, 1.0f, 1.0f, 1.0f);
 
     // render the screen quad with the framebuffer's texture

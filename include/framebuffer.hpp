@@ -48,6 +48,15 @@ static constexpr std::array<Vertex, 6> framebuffer_vertices {
   Vertex{{1.0f, 1.0f}, detail::vertex::default_color, {1.f, 1.f}}
 };
 } // namespace fre2d::detail::framebuffer
+
+struct AdditionalTexturesInfo {
+  GLint sampler_id;
+  const char* name;
+  Texture texture;
+};
+
+using AdditionalTextures = std::vector<AdditionalTexturesInfo>;
+
 // TODO: support multisampling for antialiasing.
 class Framebuffer {
 public:
@@ -69,7 +78,8 @@ public:
     GLsizei height,
     bool use_default = false,
     const char* default_vertex_shader = detail::framebuffer::default_vertex,
-    const char* default_fragment_shader = detail::framebuffer::default_fragment
+    const char* default_fragment_shader = detail::framebuffer::default_fragment,
+    const AdditionalTextures& additional_textures = {}
   ) noexcept;
 
   // unbinds current framebuffer to default one.
@@ -96,6 +106,9 @@ public:
   [[nodiscard]] const VertexBuffer& get_framebuffer_vbo() const noexcept;
   [[nodiscard]] const Shader& get_framebuffer_shader() const noexcept;
 
+  void set_additional_textures(const AdditionalTextures& additional_textures) noexcept;
+  [[nodiscard]] const AdditionalTextures& get_additional_textures() const noexcept;
+
   template<typename Callable, typename... Args>
   requires std::invocable<Callable, Args...>
   void call(Callable&& fn, Args&&... args) noexcept {
@@ -115,6 +128,8 @@ private:
   GLuint _fbo_id;
   GLsizei _width;
   GLsizei _height;
+
+  AdditionalTextures _additional_textures;
 
   bool _first_time;
   bool _clear_called;
