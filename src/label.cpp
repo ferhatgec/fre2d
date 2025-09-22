@@ -203,8 +203,17 @@ void Label::_initialize_fields_other_than_color(
         std::max(this->_bbox_h, static_cast<GLfloat>(glyph->bitmap_top));
   }
   this->_relative_pos = glm::vec2{this->_bbox_w / 2.f, this->_bbox_h / 2.f};
-  this->_vao.initialize();
-  this->_vbo.empty_initialize(sizeof(Vertex) * 6);
+
+  if(this->_vao.get_vao_id() == 0)
+    this->_vao.initialize();
+
+  this->_vao.bind();
+
+  if(this->_vbo.get_vbo_id() == 0)
+    this->_vbo.empty_initialize(sizeof(Vertex) * 6);
+
+  this->_vbo.bind();
+
   // position attribute
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);

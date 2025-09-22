@@ -190,7 +190,7 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
   Label label(
       font,
       "Hello world",
-      {0.f, 0.f},
+      {250.f, 0.f},
       std::array<glm::vec4, 6> {
           glm::vec4{ 1.f, 0.f, 0.f, 0.5f},
           glm::vec4{1.f, 0.f, 0.f, 1.f},
@@ -239,12 +239,18 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
       // change rotation of Label by counter-clockwise winding
       // label.set_rotation(static_cast<GLfloat>(glfwGetTime()));
 
+      label.initialize_label(
+          font,
+          std::to_string(glfwGetTime()).data(),
+          label.get_position(),
+          detail::drawable::default_color
+      );
       // draw objects (TODO: no batch calls for now)
       x.draw(circle_shader, renderer);
       ring.draw(circle_shader, renderer);
       pol.draw(default_shader, renderer);
-      label.draw(text_shader, renderer);
       rect.draw(default_shader, renderer);
+      label.draw(text_shader, renderer);
     });
 
     custom_framebuffer.render_texture();
