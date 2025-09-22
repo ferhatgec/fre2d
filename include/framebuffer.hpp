@@ -17,7 +17,7 @@ namespace fre2d {
 namespace detail::framebuffer {
 static constexpr auto default_vertex =
 fre2d_default_glsl_version
-default_buffer_layouts
+fre2d_default_buffer_layouts
 R"(
 out vec2 TexCoords;
 out vec4 Color;

@@ -23,7 +23,7 @@ static constexpr std::array default_colors {
 
 static constexpr auto default_vertex =
 fre2d_default_glsl_version
-default_buffer_layouts
+fre2d_default_buffer_layouts
 R"(
 out vec4 attr_TextColor;
 out vec2 TexCoords;

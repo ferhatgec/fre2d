@@ -13,7 +13,7 @@ namespace detail::circle {
 static constexpr GLfloat default_thickness { 1.f };
 static constexpr auto default_vertex =
 fre2d_default_glsl_version
-default_buffer_layouts
+fre2d_default_buffer_layouts
 R"(
 out vec2 TexCoords;
 out vec4 Color;

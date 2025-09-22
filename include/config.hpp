@@ -9,7 +9,7 @@
 
 #define fre2d_default_glsl_version "#version 450 core" fre2d_newline
 
-#define default_buffer_layouts R"(
+#define fre2d_default_buffer_layouts R"(
 layout (location = 0) in vec2 attr_Position;
 layout (location = 1) in vec4 attr_Color;
 layout (location = 2) in vec2 attr_TexCoords;
