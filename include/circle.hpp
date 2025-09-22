@@ -101,6 +101,10 @@ public:
   void before_draw_custom(const Shader& shader,
                           const std::unique_ptr<Renderer>& rnd) noexcept override;
 
+  void before_draw_custom(const Shader& shader,
+                          const std::unique_ptr<Camera>& cam,
+                          const std::unique_ptr<LightManager>& lm) noexcept override;
+
   [[nodiscard]] const GLfloat& get_thickness() const noexcept;
   void set_thickness(GLfloat thickness) noexcept;
 protected:

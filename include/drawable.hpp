@@ -7,6 +7,7 @@
 
 #include "mesh.hpp"
 #include "shader.hpp"
+#include "light_manager.hpp"
 #include <memory>
 
 namespace fre2d {
@@ -76,6 +77,10 @@ public:
   virtual void draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept = 0;
   virtual void before_draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept; // set uniforms, including camera matrices
   virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept;
+
+  virtual void draw(const Shader& shader, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& lm) noexcept = 0;
+  virtual void before_draw(const Shader& shader, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& lm) noexcept; // set uniforms, including camera matrices
+  virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& lm) noexcept;
 protected:
   glm::vec2 _position;
   glm::vec3 _scale; // normally in 2D space you don't need z dimension but i added it anyway.

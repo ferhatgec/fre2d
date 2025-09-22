@@ -162,17 +162,25 @@ void Drawable::initialize_drawable(
 // sets shader uniforms
 void Drawable::before_draw(const Shader& shader,
                            const std::unique_ptr<Renderer>& rnd) noexcept {
+  this->before_draw(shader, rnd->get_camera(), rnd->get_light_manager());
+}
+
+void Drawable::before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept {}
+
+void Drawable::before_draw(const Shader &shader,
+                           const std::unique_ptr<Camera> &cam,
+                           const std::unique_ptr<LightManager> &lm) noexcept {
   this->get_mesh().get_vao().bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", rnd->get_camera()->get_view_matrix());
-  shader.set_float_mat4x4("Projection", rnd->get_camera()->get_projection_matrix());
+  shader.set_float_mat4x4("View", cam->get_view_matrix());
+  shader.set_float_mat4x4("Projection", cam->get_projection_matrix());
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
-  this->before_draw_custom(shader, rnd);
-  rnd->get_light_manager()->get_point_lights_ssbo().bind();
-  rnd->get_light_manager()->update_buffers();
+  this->before_draw_custom(shader, cam, lm);
+  lm->get_point_lights_ssbo().bind();
+  lm->update_buffers();
 
   shader.set_int("TextureSampler", 0);
   // no texture given
@@ -184,5 +192,9 @@ void Drawable::before_draw(const Shader& shader,
   this->get_mesh().get_vao().unbind();
 }
 
-void Drawable::before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept {}
+void Drawable::before_draw_custom(
+    const Shader &shader,
+    const std::unique_ptr<Camera> &cam,
+    const std::unique_ptr<LightManager> &lm
+) noexcept {}
 } // namespace fre2d

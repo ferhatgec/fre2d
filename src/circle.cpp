@@ -64,6 +64,12 @@ void Circle::before_draw_custom(
   const Shader& shader,
   const std::unique_ptr<Renderer>& rnd
 ) noexcept {
+  this->before_draw_custom(shader, rnd->get_camera(), rnd->get_light_manager());
+}
+
+void Circle::before_draw_custom(
+    const Shader &shader, const std::unique_ptr<Camera> &cam,
+    const std::unique_ptr<LightManager> &lm) noexcept {
   shader.set_float("Thickness", this->_thickness);
 }
 

@@ -100,6 +100,11 @@ public:
   ) noexcept;
 
   void draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
+  void draw(
+      const Shader& shader,
+      const std::unique_ptr<Camera>& cam,
+      const std::unique_ptr<LightManager>& lm
+  ) noexcept override;
 private:
   [[nodiscard]] static std::vector<Vertex>
   _apply_tex_coords(const std::vector<Vertex2>& vertices) noexcept;

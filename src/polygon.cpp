@@ -4,6 +4,7 @@
 // Distributed under the terms of the MIT License.
 //
 #include <polygon.hpp>
+#include <renderer.hpp>
 #include <iostream>
 
 namespace fre2d {
@@ -171,7 +172,12 @@ void Polygon::initialize_polygon(
 
 void Polygon::draw(const Shader &shader,
                    const std::unique_ptr<Renderer> &rnd) noexcept {
-  this->before_draw(shader, rnd);
+  this->draw(shader, rnd->get_camera(), rnd->get_light_manager());
+}
+
+void Polygon::draw(const Shader &shader, const std::unique_ptr<Camera> &cam,
+                   const std::unique_ptr<LightManager> &lm) noexcept {
+  this->before_draw(shader, cam, lm);
   shader.use();
   this->_mesh.get_vao().bind();
   this->_mesh.get_vbo().bind();

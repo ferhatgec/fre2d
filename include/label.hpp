@@ -112,6 +112,18 @@ public:
   void draw(const Shader &shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
   void before_draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
 
+  void draw(
+      const Shader &shader,
+      const std::unique_ptr<Camera>& cam,
+      const std::unique_ptr<LightManager>& lm
+  ) noexcept override;
+
+  void before_draw(
+      const Shader& shader,
+      const std::unique_ptr<Camera>& cam,
+      const std::unique_ptr<LightManager>& lm
+  ) noexcept override;
+
   [[nodiscard]] const std::string& get_current_text() const noexcept;
 private:
   void _initialize_fields_other_than_color(

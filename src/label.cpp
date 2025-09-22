@@ -97,8 +97,19 @@ void Label::initialize_label(
 // since we utilize both VertexArray and VertexBuffer.
 void Label::draw(const Shader &shader,
                  const std::unique_ptr<Renderer> &rnd) noexcept {
+  this->draw(shader, rnd->get_camera(), rnd->get_light_manager());
+}
+
+void Label::before_draw(const Shader &shader,
+                        const std::unique_ptr<Renderer> &rnd) noexcept {
+  this->before_draw(shader, rnd->get_camera(), rnd->get_light_manager());
+}
+
+
+void Label::draw(const Shader &shader, const std::unique_ptr<Camera> &cam,
+                 const std::unique_ptr<LightManager> &lm) noexcept {
   glm::vec2 pos = this->_position;
-  this->before_draw(shader, rnd);
+  this->before_draw(shader, cam, lm);
   glActiveTexture(GL_TEXTURE0);
   for (const auto &c : this->_text) {
     const auto &character = this->_font._char_map[c];
@@ -112,22 +123,22 @@ void Label::draw(const Shader &shader,
     if(this->_colors.index() == 1) {
       const auto& color = std::get<1>(this->_colors);
       vertices = {
-        Vertex{{xpos, ypos + h}, color, {0.0f, 0.0f}},
-        Vertex{{xpos, ypos}, color,  {0.0f, 1.0f}},
-        Vertex{{xpos + w, ypos}, color, {1.0f, 1.0f}},
-        Vertex{{xpos, ypos + h}, color, {0.0f, 0.0f}},
-        Vertex{{xpos + w, ypos}, color, {1.0f, 1.0f}},
-        Vertex{{xpos + w, ypos + h}, color, {1.0f, 0.0f}}
+          Vertex{{xpos, ypos + h}, color, {0.0f, 0.0f}},
+          Vertex{{xpos, ypos}, color,  {0.0f, 1.0f}},
+          Vertex{{xpos + w, ypos}, color, {1.0f, 1.0f}},
+          Vertex{{xpos, ypos + h}, color, {0.0f, 0.0f}},
+          Vertex{{xpos + w, ypos}, color, {1.0f, 1.0f}},
+          Vertex{{xpos + w, ypos + h}, color, {1.0f, 0.0f}}
       };
     } else { // use different color per vertex
       const auto& colors = std::get<0>(this->_colors);
       vertices = {
-        Vertex{{xpos, ypos + h}, colors[0], {0.0f, 0.0f}},
-        Vertex{{xpos, ypos}, colors[1],  {0.0f, 1.0f}},
-        Vertex{{xpos + w, ypos}, colors[2], {1.0f, 1.0f}},
-        Vertex{{xpos, ypos + h}, colors[3], {0.0f, 0.0f}},
-        Vertex{{xpos + w, ypos}, colors[4], {1.0f, 1.0f}},
-        Vertex{{xpos + w, ypos + h}, colors[5], {1.0f, 0.0f}}
+          Vertex{{xpos, ypos + h}, colors[0], {0.0f, 0.0f}},
+          Vertex{{xpos, ypos}, colors[1],  {0.0f, 1.0f}},
+          Vertex{{xpos + w, ypos}, colors[2], {1.0f, 1.0f}},
+          Vertex{{xpos, ypos + h}, colors[3], {0.0f, 0.0f}},
+          Vertex{{xpos + w, ypos}, colors[4], {1.0f, 1.0f}},
+          Vertex{{xpos + w, ypos + h}, colors[5], {1.0f, 0.0f}}
       };
     }
     character.texture.bind();
@@ -142,16 +153,17 @@ void Label::draw(const Shader &shader,
 }
 
 void Label::before_draw(const Shader &shader,
-                        const std::unique_ptr<Renderer> &rnd) noexcept {
+                        const std::unique_ptr<Camera> &cam,
+                        const std::unique_ptr<LightManager> &lm) noexcept {
   this->_vao.bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", rnd->get_camera()->get_view_matrix());
-  shader.set_float_mat4x4("Projection", rnd->get_camera()->get_projection_matrix());
+  shader.set_float_mat4x4("View", cam->get_view_matrix());
+  shader.set_float_mat4x4("Projection", cam->get_projection_matrix());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
-  rnd->get_light_manager()->get_point_lights_ssbo().bind();
-  rnd->get_light_manager()->update_buffers();
+  lm->get_point_lights_ssbo().bind();
+  lm->update_buffers();
 
   // no different color per vertex
   if (this->_colors.index() == 1) {

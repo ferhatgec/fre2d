@@ -61,6 +61,11 @@ public:
   ) noexcept;
 
   void draw(const Shader &shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
+  void draw(
+      const Shader &shader,
+      const std::unique_ptr<Camera>& cam,
+      const std::unique_ptr<LightManager>& lm
+  ) noexcept override;
 private:
   std::vector<Vertex> _vertices;
 };
