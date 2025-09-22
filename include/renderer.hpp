@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
@@ -8,7 +8,7 @@
 #include <memory>
 #include "camera.hpp"
 #include "framebuffer.hpp"
-
+#include "light_manager.hpp"
 
 // fresh renderer enhanced 2d
 // (OpenGL based renderer for freshengine but can be used for other things as well)
@@ -28,12 +28,15 @@ public:
 
   void attach_framebuffer(std::unique_ptr<Framebuffer> fb) noexcept;
   void attach_camera(std::unique_ptr<Camera> cam) noexcept;
+  void attach_light_manager(std::unique_ptr<LightManager> lm) noexcept;
 
   // update camera and framebuffer size
   void resize(GLsizei width, GLsizei height) noexcept;
 
   [[nodiscard]] const std::unique_ptr<Framebuffer>& get_framebuffer() const noexcept;
   [[nodiscard]] const std::unique_ptr<Camera>& get_camera() const noexcept;
+  [[nodiscard]] const std::unique_ptr<LightManager>& get_light_manager() const noexcept;
+
   [[nodiscard]] const GLsizei& get_width() const noexcept;
   [[nodiscard]] const GLsizei& get_height() const noexcept;
 
@@ -41,6 +44,8 @@ public:
 private:
   std::unique_ptr<Framebuffer> _framebuffer;
   std::unique_ptr<Camera> _camera;
+  std::unique_ptr<LightManager> _lm;
+
   GLsizei _width;
   GLsizei _height;
   bool _initialized;

@@ -14,7 +14,7 @@
 // it in global scope.
 using namespace fre2d;
 
-Renderer renderer;
+std::unique_ptr<Renderer> renderer;
 
 void framebuffer_size_callback(GLFWwindow*, int, int);
 void window_key_process(GLFWwindow*);
@@ -33,6 +33,7 @@ int main() {
   // we use core profile; so for glad generator;
   // don't forget to select core profile.
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
   GLFWwindow* window = glfwCreateWindow(Width, Height, "fre2d example", NULL, NULL);
 
@@ -45,7 +46,7 @@ int main() {
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetScrollCallback(window, window_scroll_callback);
-  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     std::cout << "error: failed to initialize GLAD\n";
@@ -79,15 +80,44 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
 }
   )";
 
+  renderer = std::make_unique<Renderer>();
+  
   // create custom framebuffer with depth and stencil buffers attached to it.
   // TODO: do it optional since in 2D depth and stencil buffers are not used
   // frequently. also, do not use Framebuffer and Camera separately;
   // otherwise you have to sync window size changes yourself.
-  renderer.attach_framebuffer(std::make_unique<Framebuffer>(Width, Height, false, main_framebuffer_vertex_shader, main_framebuffer_fragment_shader));
-  renderer.attach_camera(std::make_unique<Camera>(Width, Height));
+  renderer->attach_framebuffer(std::make_unique<Framebuffer>(Width, Height, false, main_framebuffer_vertex_shader, main_framebuffer_fragment_shader));
+  renderer->attach_camera(std::make_unique<Camera>(Width, Height));
+  renderer->attach_light_manager(std::make_unique<LightManager>());
+
+  renderer->get_light_manager()->initialize();
+
+  renderer->get_light_manager()->push_point_light(
+      fre2d::PointLight(
+          glm::vec2(-200.f, 200.f),
+          glm::vec3 { 1.f, 1.0f, 1.0f },
+          glm::vec3 { 0.f, 0.f, 0.9f},
+          0.3f,
+          0.09f,
+          0.0f
+      )
+  );
+
+  renderer->get_light_manager()->push_point_light(
+    fre2d::PointLight(
+      glm::vec2(0.f, 200.f),
+      glm::vec3 { 1.0f, 0.0f, 0.0f },
+      glm::vec3 { 0.f, 0.f, 0.f},
+      0.0f,
+      0.009f,
+      0.00032f
+    )
+  );
+
+  renderer->get_light_manager()->update_buffers();
 
   // we attach SecondaryTexture uniform texture into main framebuffer.
-  renderer.get_framebuffer()->set_additional_textures(std::vector {
+  renderer->get_framebuffer()->set_additional_textures(std::vector {
       AdditionalTexturesInfo{1, "SecondaryTexture", custom_framebuffer.get_color_buffer()}
   });
 
@@ -95,21 +125,18 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
   Shader default_shader(detail::shader::default_vertex, detail::shader::default_fragment);
 
   // framebuffer and camera stored as unique_ptr within Renderer class.
-  const auto& fb = renderer.get_framebuffer();
+  const auto& fb = renderer->get_framebuffer();
 
   // load texture
   Texture tex("../../example/gechland.apartment.png");
   Texture tex1("../../example/gechland.icon.png");
 
   Rectangle rect(
-    200,
-    200,
+    500,
+    500,
     glm::vec2(-200.f, 200.f),
     detail::drawable::default_color,
-    tex1,
-    0.f,
-    true,
-    false
+      tex
   );
 
   // create polygon with given vertices.
@@ -149,7 +176,7 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
   FontManager font_manager(true);
 
   // load font
-  Font font(font_manager, "../../example/JetBrainsMono-Regular.ttf", 48);
+  Font font(font_manager, "../../example/JetBrainsMono-Regular.ttf", 96);
 
   // load default text shaders
   Shader text_shader(detail::label::default_vertex, detail::label::default_fragment);
@@ -210,14 +237,14 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
       pol.set_rotation(-static_cast<GLfloat>(glfwGetTime()));
 
       // change rotation of Label by counter-clockwise winding
-      label.set_rotation(static_cast<GLfloat>(glfwGetTime()));
+      // label.set_rotation(static_cast<GLfloat>(glfwGetTime()));
 
       // draw objects (TODO: no batch calls for now)
-      x.draw(circle_shader, renderer.get_camera());
-      ring.draw(circle_shader, renderer.get_camera());
-      pol.draw(default_shader, renderer.get_camera());
-      label.draw(text_shader, renderer.get_camera());
-      rect.draw(default_shader, renderer.get_camera());
+      x.draw(circle_shader, renderer);
+      ring.draw(circle_shader, renderer);
+      pol.draw(default_shader, renderer);
+      label.draw(text_shader, renderer);
+      rect.draw(default_shader, renderer);
     });
 
     custom_framebuffer.render_texture();
@@ -227,7 +254,8 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
     fb->call([&] {
       // clear current framebuffer (might be default too)
       // this will apply Mexican filter used in movies.
-      fb->clear_color(1.0f, 0.95f, 0.4f, 1.0f);
+      // fb->clear_color(1.0f, 0.95f, 0.4f, 1.0f);
+      fb->clear_color(1.f, 1.f, 1.f, 1.f);
     });
 
     // with default framebuffer, this instruction won't affect current one.
@@ -249,29 +277,46 @@ void window_key_process(GLFWwindow* window) {
   // camera movement
   float velocity { 2000.f * delta_time };
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() + glm::vec3(0.0f, velocity, 0.0f));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() + glm::vec3(0.0f, velocity, 0.0f));
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() - glm::vec3(0.0f, velocity, 0.0f));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() - glm::vec3(0.0f, velocity, 0.0f));
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() - glm::vec3(velocity, 0.f, 0.0f));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() - glm::vec3(velocity, 0.f, 0.0f));
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() + glm::vec3(velocity, 0.f, 0.0f));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() + glm::vec3(velocity, 0.f, 0.0f));
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() + glm::vec3(0.0f, 0.f, velocity));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() + glm::vec3(0.0f, 0.f, velocity));
   if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-    renderer.get_camera()->set_position(renderer.get_camera()->get_camera_position() - glm::vec3(0.0f, 0.f, velocity));
+    renderer->get_camera()->set_position(renderer->get_camera()->get_camera_position() - glm::vec3(0.0f, 0.f, velocity));
+
+  if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    renderer->get_light_manager()->get_point_light_mutable(
+                                    renderer->get_light_manager()->get_point_lights().size() - 1
+                                    ).get_position_mutable() += glm::vec2(0.0f, velocity);
+  if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    renderer->get_light_manager()->get_point_light_mutable(
+                                    renderer->get_light_manager()->get_point_lights().size() - 1
+                                    ).get_position_mutable() -= glm::vec2(0.0f, velocity);
+  if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    renderer->get_light_manager()->get_point_light_mutable(
+                                    renderer->get_light_manager()->get_point_lights().size() - 1
+                                    ).get_position_mutable() -= glm::vec2(velocity, 0.f);
+  if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    renderer->get_light_manager()->get_point_light_mutable(
+                                    renderer->get_light_manager()->get_point_lights().size() - 1
+                                    ).get_position_mutable() += glm::vec2(velocity, 0.f);
 }
 
 void window_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   // there might be exceptions of this but we don't need xoffset for mouse wheel.
   if(yoffset > 0.f) {
-    renderer.get_camera()->set_zoom_factor(renderer.get_camera()->get_zoom_factor() + 0.10f);
+    renderer->get_camera()->set_zoom_factor(renderer->get_camera()->get_zoom_factor() + 0.10f);
   } else if(yoffset < 0.f) {
-    renderer.get_camera()->set_zoom_factor(renderer.get_camera()->get_zoom_factor() - 0.10f);
+    renderer->get_camera()->set_zoom_factor(renderer->get_camera()->get_zoom_factor() - 0.10f);
   }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   // automatically resize both camera and framebuffer (default too)
-  renderer.get_framebuffer()->resize(width, height);
+  renderer->get_framebuffer()->resize(width, height);
 }

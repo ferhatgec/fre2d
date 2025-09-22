@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
@@ -16,14 +16,13 @@
 namespace fre2d {
 namespace detail::framebuffer {
 static constexpr auto default_vertex =
-R"(#version 450 core
-layout (location = 0) in vec3 attr_Position;
-layout (location = 1) in vec4 attr_Color;
-layout (location = 2) in vec2 attr_TexCoords;
+default_glsl_version
+default_buffer_layouts
+R"(
 out vec2 TexCoords;
 out vec4 Color;
 void main() {
-  gl_Position = vec4(attr_Position, 1.f);
+  gl_Position = vec4(attr_Position, 0.f, 1.f);
   TexCoords = attr_TexCoords;
   Color = attr_Color;
 }

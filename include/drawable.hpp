@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
@@ -10,6 +10,9 @@
 #include <memory>
 
 namespace fre2d {
+
+class Renderer;
+
 namespace detail::drawable {
 static constexpr glm::vec2 default_position { 0.f, 0.f };
 static constexpr GLfloat default_rotation_radians { 0.f };
@@ -70,9 +73,9 @@ public:
     bool flip_horizontally = detail::drawable::default_flip_vertically
   ) noexcept;
 
-  virtual void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept = 0;
-  virtual void before_draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept; // set uniforms, including camera matrices
-  virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept;
+  virtual void draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept = 0;
+  virtual void before_draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept; // set uniforms, including camera matrices
+  virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept;
 protected:
   glm::vec2 _position;
   glm::vec3 _scale; // normally in 2D space you don't need z dimension but i added it anyway.

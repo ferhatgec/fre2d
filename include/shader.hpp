@@ -8,6 +8,8 @@
 #include <memory>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include "config.hpp"
+#include "light.hpp"
 
 namespace fre2d {
 namespace detail::shader {
@@ -15,28 +17,21 @@ namespace detail::shader {
 // since not messing with file paths are huge plus and 0.0000001s runtime speed!
 // TODO: we might use preprocessor macros instead of relying on runtime booleans
 static constexpr auto default_vertex =
-R"(#version 450 core
-layout (location = 0) in vec3 attr_Position;
-layout (location = 1) in vec4 attr_Color;
-layout (location = 2) in vec2 attr_TexCoords;
-
+default_glsl_version
+default_buffer_layouts
+R"(
 out vec2 TexCoords;
 out vec4 Color;
-
-/* those uniforms are automatically passed by fre2d */
-uniform mat4 Model;
-uniform mat4 View;
-uniform mat4 Projection;
-uniform bool FlipVertically;
-uniform bool FlipHorizontally;
-
+out vec2 FragPos;
+)"
+default_uniforms
+R"(
 void main() {
-  gl_Position = Projection * View * Model * vec4(attr_Position, 1.f);
-  /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
-  TexCoords = vec2(
-    (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
-    (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
-  );
+  gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
+  FragPos = vec2(Model * vec4(attr_Position, 0.f, 1.f));
+)"
+  default_tex_coords
+R"(
   Color = attr_Color;
 }
 )";
@@ -46,16 +41,24 @@ R"(#version 450 core
 
 in vec2 TexCoords;
 in vec4 Color;
+in vec2 FragPos;
 
 out vec4 FragColor;
 
 uniform sampler2D TextureSampler;
 uniform bool UseTexture;
-
+)"
+default_point_light_fragment
+default_color_func
+R"(
 void main() {
+  vec4 default_color = calculate_color(Color, TextureSampler, TexCoords, UseTexture);
   /* if UseTexture = 0.f, it will return Color.
      if UseTexture = 1.f, then it will return Color * texture(TextureSampler, TexCoords) */
-  FragColor = mix(Color, Color * texture(TextureSampler, TexCoords), float(UseTexture));
+  FragColor = default_color;
+  for(int i = 0; i < point_lights.length(); i++) {
+    FragColor += vec4(calculate_point_light(point_lights[i], TextureSampler, TexCoords, FragPos), default_color.a);
+  }
 })";
 
 static constexpr auto info_log_size { 512 };

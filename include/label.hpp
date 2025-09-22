@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
@@ -22,28 +22,21 @@ static constexpr std::array default_colors {
 };
 
 static constexpr auto default_vertex =
-R"(#version 450 core
-layout (location = 0) in vec2 attr_Position;
-layout (location = 1) in vec4 attr_Color;
-layout (location = 2) in vec2 attr_TexCoords;
-
+default_glsl_version
+default_buffer_layouts
+R"(
 out vec4 attr_TextColor;
 out vec2 TexCoords;
-
-/* those uniforms are automatically passed by fre2d */
-uniform mat4 Model;
-uniform mat4 View;
-uniform mat4 Projection;
-uniform bool FlipVertically;
-uniform bool FlipHorizontally;
-
+out vec2 FragPos;
+)"
+default_uniforms
+R"(
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
-  /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
-  TexCoords = vec2(
-    (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
-    (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
-  );
+  FragPos = vec2(Model * vec4(attr_Position, 0.f, 1.f));
+)"
+  default_tex_coords
+R"(
   attr_TextColor = attr_Color;
 }
 )";
@@ -53,16 +46,22 @@ R"(#version 450 core
 
 in vec4 attr_TextColor;
 in vec2 TexCoords;
+in vec2 FragPos;
 
 /* this over gl_FragColor gives us flexibility of manipulating it easily */
 out vec4 Color;
 
 uniform sampler2D Text;
 uniform vec4 TextColor;
-
+)"
+default_point_light_fragment
+R"(
 void main() {
   vec4 sampled = vec4(1.f, 1.f, 1.f, texture(Text, TexCoords).r);
   Color = TextColor * attr_TextColor * sampled;
+  for(int i = 0; i < point_lights.length(); i++) {
+    Color += vec4(calculate_point_light(point_lights[i], Text, TexCoords, FragPos), sampled.a);
+  }
 }
 )";
 } // namespace fer2d::detail::label
@@ -110,8 +109,8 @@ public:
     bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
-  void draw(const Shader &shader, const std::unique_ptr<Camera>& camera) noexcept override;
-  void before_draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept override;
+  void draw(const Shader &shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
+  void before_draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
 
   [[nodiscard]] const std::string& get_current_text() const noexcept;
 private:

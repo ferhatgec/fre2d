@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <polygon.hpp>
@@ -170,8 +170,8 @@ void Polygon::initialize_polygon(
 }
 
 void Polygon::draw(const Shader &shader,
-                   const std::unique_ptr<Camera> &camera) noexcept {
-  this->before_draw(shader, camera);
+                   const std::unique_ptr<Renderer> &rnd) noexcept {
+  this->before_draw(shader, rnd);
   shader.use();
   this->_mesh.get_vao().bind();
   this->_mesh.get_vbo().bind();

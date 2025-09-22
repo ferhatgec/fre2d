@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <renderer.hpp>
@@ -16,19 +16,27 @@ Renderer::Renderer(GLsizei width, GLsizei height) noexcept
   : _width{width}, _height{height}, _initialized{false} {
   this->attach_framebuffer(std::make_unique<Framebuffer>(width, height));
   this->attach_camera(std::make_unique<Camera>(width, height));
+  this->attach_light_manager(std::make_unique<LightManager>());
   this->_initialized = true;
 }
 
 void Renderer::attach_framebuffer(std::unique_ptr<Framebuffer> fb) noexcept {
   this->_framebuffer = std::move(fb);
-  if(this->_camera && !this->_initialized) {
+  if(this->_lm && this->_camera && !this->_initialized) {
     this->_initialized = true;
   }
 }
 
 void Renderer::attach_camera(std::unique_ptr<Camera> cam) noexcept {
   this->_camera = std::move(cam);
-  if(this->_framebuffer && !this->_initialized) {
+  if(this->_lm && this->_framebuffer && !this->_initialized) {
+    this->_initialized = true;
+  }
+}
+
+void Renderer::attach_light_manager(std::unique_ptr<LightManager> lm) noexcept {
+  this->_lm = std::move(lm);
+  if(this->_camera && this->_framebuffer && !this->_initialized) {
     this->_initialized = true;
   }
 }
@@ -60,5 +68,9 @@ void Renderer::resize(GLsizei width, GLsizei height) noexcept {
 
 [[nodiscard]] const bool& Renderer::is_initialized() const noexcept {
   return this->_initialized;
+}
+
+[[nodiscard]] const std::unique_ptr<LightManager>& Renderer::get_light_manager() const noexcept {
+  return this->_lm;
 }
 } // namespace fre2d

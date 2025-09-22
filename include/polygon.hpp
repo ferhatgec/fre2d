@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #pragma once
@@ -99,7 +99,7 @@ public:
     bool flip_horizontally = detail::drawable::default_flip_horizontally
   ) noexcept;
 
-  void draw(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept override;
+  void draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept override;
 private:
   [[nodiscard]] static std::vector<Vertex>
   _apply_tex_coords(const std::vector<Vertex2>& vertices) noexcept;

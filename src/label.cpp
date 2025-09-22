@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <camera.hpp>
@@ -8,6 +8,7 @@
 #include <label.hpp>
 
 #include "../include/helper_funcs.hpp"
+#include <renderer.hpp>
 
 namespace fre2d {
 Label::Label(
@@ -95,9 +96,9 @@ void Label::initialize_label(
 // TODO: actually it's pretty straightforward to use Mesh class here.
 // since we utilize both VertexArray and VertexBuffer.
 void Label::draw(const Shader &shader,
-                 const std::unique_ptr<Camera> &camera) noexcept {
+                 const std::unique_ptr<Renderer> &rnd) noexcept {
   glm::vec2 pos = this->_position;
-  this->before_draw(shader, camera);
+  this->before_draw(shader, rnd);
   glActiveTexture(GL_TEXTURE0);
   for (const auto &c : this->_text) {
     const auto &character = this->_font._char_map[c];
@@ -141,14 +142,17 @@ void Label::draw(const Shader &shader,
 }
 
 void Label::before_draw(const Shader &shader,
-                        const std::unique_ptr<Camera> &camera) noexcept {
+                        const std::unique_ptr<Renderer> &rnd) noexcept {
   this->_vao.bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", camera->get_view_matrix());
-  shader.set_float_mat4x4("Projection", camera->get_projection_matrix());
+  shader.set_float_mat4x4("View", rnd->get_camera()->get_view_matrix());
+  shader.set_float_mat4x4("Projection", rnd->get_camera()->get_projection_matrix());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
+  rnd->get_light_manager()->get_point_lights_ssbo().bind();
+  rnd->get_light_manager()->update_buffers();
+
   // no different color per vertex
   if (this->_colors.index() == 1) {
     shader.set_float_vec4("TextColor", std::get<1>(this->_colors));

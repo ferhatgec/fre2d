@@ -1,10 +1,11 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <circle.hpp>
 #include <helper_funcs.hpp>
+#include <renderer.hpp>
 
 namespace fre2d {
 Circle::Circle() noexcept
@@ -61,7 +62,7 @@ void Circle::initialize_circle(
 
 void Circle::before_draw_custom(
   const Shader& shader,
-  const std::unique_ptr<Camera>& camera
+  const std::unique_ptr<Renderer>& rnd
 ) noexcept {
   shader.set_float("Thickness", this->_thickness);
 }

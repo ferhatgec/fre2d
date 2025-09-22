@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2024 Ferhat Geçdoğan All Rights Reserved.
+// Copyright (c) 2024-2025 Ferhat Geçdoğan All Rights Reserved.
 // Distributed under the terms of the MIT License.
 //
 #include <glm/gtc/matrix_transform.hpp>
@@ -8,6 +8,7 @@
 #include <renderbuffer.hpp>
 #include <helper_funcs.hpp>
 #include <camera.hpp>
+#include <renderer.hpp>
 
 namespace fre2d {
 Drawable::Drawable() noexcept
@@ -160,16 +161,19 @@ void Drawable::initialize_drawable(
 
 // sets shader uniforms
 void Drawable::before_draw(const Shader& shader,
-                           const std::unique_ptr<Camera>& camera) noexcept {
+                           const std::unique_ptr<Renderer>& rnd) noexcept {
   this->get_mesh().get_vao().bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", camera->get_view_matrix());
-  shader.set_float_mat4x4("Projection", camera->get_projection_matrix());
+  shader.set_float_mat4x4("View", rnd->get_camera()->get_view_matrix());
+  shader.set_float_mat4x4("Projection", rnd->get_camera()->get_projection_matrix());
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
-  this->before_draw_custom(shader, camera);
+  this->before_draw_custom(shader, rnd);
+  rnd->get_light_manager()->get_point_lights_ssbo().bind();
+  rnd->get_light_manager()->update_buffers();
+
   shader.set_int("TextureSampler", 0);
   // no texture given
   if (!this->get_mesh().get_texture().has_value()) {
@@ -180,5 +184,5 @@ void Drawable::before_draw(const Shader& shader,
   this->get_mesh().get_vao().unbind();
 }
 
-void Drawable::before_draw_custom(const Shader& shader, const std::unique_ptr<Camera>& camera) noexcept {}
+void Drawable::before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept {}
 } // namespace fre2d
