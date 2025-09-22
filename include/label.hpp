@@ -22,20 +22,20 @@ static constexpr std::array default_colors {
 };
 
 static constexpr auto default_vertex =
-default_glsl_version
+fre2d_default_glsl_version
 default_buffer_layouts
 R"(
 out vec4 attr_TextColor;
 out vec2 TexCoords;
 out vec2 FragPos;
 )"
-default_uniforms
+fre2d_default_uniforms
 R"(
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
   FragPos = vec2(Model * vec4(attr_Position, 0.f, 1.f));
 )"
-  default_tex_coords
+  fre2d_default_tex_coords
 R"(
   attr_TextColor = attr_Color;
 }
@@ -54,7 +54,7 @@ out vec4 Color;
 uniform sampler2D Text;
 uniform vec4 TextColor;
 )"
-default_point_light_fragment
+fre2d_default_point_light_fragment
 R"(
 void main() {
   vec4 sampled = vec4(1.f, 1.f, 1.f, texture(Text, TexCoords).r);

@@ -12,7 +12,7 @@ namespace fre2d {
 namespace detail::circle {
 static constexpr GLfloat default_thickness { 1.f };
 static constexpr auto default_vertex =
-default_glsl_version
+fre2d_default_glsl_version
 default_buffer_layouts
 R"(
 out vec2 TexCoords;
@@ -20,13 +20,13 @@ out vec4 Color;
 out vec2 Position;
 out vec2 FragPos;
 )"
-default_uniforms
+fre2d_default_uniforms
 R"(
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
   /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
 )"
-  default_tex_coords
+  fre2d_default_tex_coords
 R"(
   Color = attr_Color;
   Position = attr_Position.xy;
@@ -49,8 +49,8 @@ uniform sampler2D TextureSampler;
 uniform bool UseTexture;
 uniform float Thickness;
 )"
-default_point_light_fragment
-default_color_func
+fre2d_default_point_light_fragment
+fre2d_default_color_func
 R"(
 void main() {
   vec4 default_color = calculate_color(Color, TextureSampler, TexCoords, UseTexture);

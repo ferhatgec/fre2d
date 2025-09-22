@@ -17,20 +17,20 @@ namespace detail::shader {
 // since not messing with file paths are huge plus and 0.0000001s runtime speed!
 // TODO: we might use preprocessor macros instead of relying on runtime booleans
 static constexpr auto default_vertex =
-default_glsl_version
+fre2d_default_glsl_version
 default_buffer_layouts
 R"(
 out vec2 TexCoords;
 out vec4 Color;
 out vec2 FragPos;
 )"
-default_uniforms
+fre2d_default_uniforms
 R"(
 void main() {
   gl_Position = Projection * View * Model * vec4(attr_Position, 0.f, 1.f);
   FragPos = vec2(Model * vec4(attr_Position, 0.f, 1.f));
 )"
-  default_tex_coords
+  fre2d_default_tex_coords
 R"(
   Color = attr_Color;
 }
@@ -48,8 +48,8 @@ out vec4 FragColor;
 uniform sampler2D TextureSampler;
 uniform bool UseTexture;
 )"
-default_point_light_fragment
-default_color_func
+fre2d_default_point_light_fragment
+fre2d_default_color_func
 R"(
 void main() {
   vec4 default_color = calculate_color(Color, TextureSampler, TexCoords, UseTexture);

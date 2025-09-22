@@ -5,18 +5,18 @@
 //
 #pragma once
 
-#define newline "\n"
+#define fre2d_newline "\n"
 
-#define default_glsl_version "#version 450 core" newline
+#define fre2d_default_glsl_version "#version 450 core" fre2d_newline
 
 #define default_buffer_layouts R"(
 layout (location = 0) in vec2 attr_Position;
 layout (location = 1) in vec4 attr_Color;
 layout (location = 2) in vec2 attr_TexCoords;
 )" \
-newline
+fre2d_newline
 
-#define default_uniforms R"(
+#define fre2d_default_uniforms R"(
 /* those uniforms are automatically passed by fre2d */
 uniform mat4 Model;
 uniform mat4 View;
@@ -24,25 +24,25 @@ uniform mat4 Projection;
 uniform bool FlipVertically;
 uniform bool FlipHorizontally;
 )" \
-newline
+fre2d_newline
 
-#define default_tex_coords R"(
+#define fre2d_default_tex_coords R"(
 /* this will avoid unnecessary if statement for FlipVertically and FlipHorizontally */
 TexCoords = vec2(
   (1.0 - attr_TexCoords.x) * int(FlipHorizontally) + (attr_TexCoords.x * int(!FlipHorizontally)),
   (1.0 - attr_TexCoords.y) * int(FlipVertically) + (attr_TexCoords.y * int(!FlipVertically))
 );
 )" \
-newline
+fre2d_newline
 
-#define default_color_func R"(
+#define fre2d_default_color_func R"(
 vec4 calculate_color(vec4 color, sampler2D tex, vec2 tex_coords, bool use_texture) {
   return mix(color, color * texture(tex, tex_coords), float(use_texture));
 }
 )" \
-newline
+fre2d_newline
 
-#define default_point_light_fragment R"(
+#define fre2d_default_point_light_fragment R"(
 struct PointLight {
   vec2 pos;
   vec4 ambient;
@@ -76,4 +76,4 @@ vec3 calculate_point_light(PointLight light, sampler2D tex, vec2 tex_coords, vec
 
   return ambient + diffuse;
 })" \
-newline
+fre2d_newline
