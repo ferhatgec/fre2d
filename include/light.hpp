@@ -8,6 +8,10 @@
 #include <glm/glm.hpp>
 
 namespace fre2d {
+namespace detail::light {
+static constexpr auto default_ambient_light = glm::vec4(1.f, 1.f, 1.f, 1.f);
+} // namespace fre2d::detail::light
+
 // TODO: implement AmbientLight and DirectionalLight.
 class PointLight {
 public:
@@ -58,5 +62,18 @@ private:
   float _quadratic;
 
   int _update_required; // required for std430 representation
+};
+
+class AmbientLight {
+public:
+  AmbientLight(glm::vec4 color = detail::light::default_ambient_light)
+      : _color{color}
+  {}
+
+  void set_color(const glm::vec4& color) noexcept;
+  [[nodiscard]] const glm::vec4& get_color() const noexcept;
+  [[nodiscard]] glm::vec4& get_color_mutable() noexcept;
+private:
+  glm::vec4 _color;
 };
 } // namespace fre2d

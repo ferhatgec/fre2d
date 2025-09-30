@@ -97,4 +97,12 @@ void LightManager::check_size_and_index(std::size_t index, const std::source_loc
   this->_point_lights_modified = true;
   return this->_point_lights[index];
 }
+
+[[nodiscard]] const AmbientLight& LightManager::get_ambient_light() const noexcept {
+  return this->_ambient_light;
+}
+
+[[nodiscard]] AmbientLight& LightManager::get_ambient_light_mutable() noexcept {
+  return this->_ambient_light;
+}
 } // namespace fre2d

@@ -181,7 +181,7 @@ void Drawable::before_draw(const Shader &shader,
   this->before_draw_custom(shader, cam, lm);
   lm->get_point_lights_ssbo().bind();
   lm->update_buffers();
-
+  shader.set_float_vec4("global_ambient_light.color", lm->get_ambient_light().get_color());
   shader.set_int("TextureSampler", 0);
   // no texture given
   if (!this->get_mesh().get_texture().has_value()) {

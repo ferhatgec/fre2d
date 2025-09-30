@@ -26,11 +26,17 @@ public:
   void push_point_light(const PointLight& pl) noexcept;
   void remove_point_light(std::size_t index) noexcept;
   void modify_point_light(std::size_t index, const PointLight& pl) noexcept;
+
+  [[nodiscard]] const AmbientLight& get_ambient_light() const noexcept;
+
+  [[nodiscard]] AmbientLight& get_ambient_light_mutable() noexcept;
 protected:
   std::vector<PointLight> _point_lights;
   SSBO _point_light_ssbo;
   std::size_t _point_lights_diff;
   bool _point_lights_modified;
+
+  AmbientLight _ambient_light;
 private:
   void check_size_and_index(std::size_t index, const std::source_location& src = std::source_location::current()) const;
 };

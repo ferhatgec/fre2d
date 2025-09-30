@@ -106,13 +106,18 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
   renderer->get_light_manager()->push_point_light(
     fre2d::PointLight(
       glm::vec2(0.f, 200.f),
-      glm::vec3 { 1.0f, 0.0f, 0.0f },
+      glm::vec3 { 1.0f, 1.0f, 1.0f },
       glm::vec3 { 0.f, 0.f, 0.f},
       0.0f,
       0.009f,
       0.00032f
     )
   );
+
+  renderer->get_light_manager()->get_ambient_light_mutable().set_color(
+      glm::vec4(0.f, 0.f, 0.f, 0.f)
+  );
+
 
   renderer->get_light_manager()->update_buffers();
 
@@ -311,6 +316,16 @@ void window_key_process(GLFWwindow* window) {
     renderer->get_light_manager()->get_point_light_mutable(
                                     renderer->get_light_manager()->get_point_lights().size() - 1
                                     ).get_position_mutable() += glm::vec2(velocity, 0.f);
+
+  if(glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+    renderer->get_light_manager()->get_ambient_light_mutable().set_color(
+        glm::vec4(1.f, 0.f, 0.f, 1.f)
+    );
+
+  if(glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+    renderer->get_light_manager()->get_ambient_light_mutable().set_color(
+        glm::vec4(0.f, 0.f, 0.f, 1.f)
+    );
 }
 
 void window_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

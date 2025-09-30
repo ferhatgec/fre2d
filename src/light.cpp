@@ -77,4 +77,16 @@ void PointLight::set_attenuation_quadratic(float quadratic) noexcept {
 [[nodiscard]] float &PointLight::get_attenuation_quadratic_mutable() noexcept {
   return this->_quadratic;
 }
+
+void AmbientLight::set_color(const glm::vec4& color) noexcept {
+  this->_color = color;
+}
+
+[[nodiscard]] const glm::vec4& AmbientLight::get_color() const noexcept {
+  return this->_color;
+}
+
+[[nodiscard]] glm::vec4& AmbientLight::get_color_mutable() noexcept {
+  return this->_color;
+}
 } // namespace fre2d

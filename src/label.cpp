@@ -164,6 +164,7 @@ void Label::before_draw(const Shader &shader,
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
   lm->get_point_lights_ssbo().bind();
   lm->update_buffers();
+  shader.set_float_vec4("global_ambient_light.color", lm->get_ambient_light().get_color());
 
   // no different color per vertex
   if (this->_colors.index() == 1) {

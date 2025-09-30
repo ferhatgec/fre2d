@@ -42,7 +42,7 @@ vec4 calculate_color(vec4 color, sampler2D tex, vec2 tex_coords, bool use_textur
 )" \
 fre2d_newline
 
-#define fre2d_default_point_light_fragment R"(
+#define fre2d_default_lighting_fragment  R"(
 struct PointLight {
   vec2 pos;
   vec4 ambient;
@@ -55,9 +55,18 @@ struct PointLight {
   bool update; // dummy
 };
 
+struct AmbientLight {
+  vec4 color;
+};
+
 layout(std430, binding = 0) buffer PointLights {
   PointLight point_lights[];
 };
+
+// TODO: we can add bounds to them and therefore we can have multiple ambient lights.
+// but right now there is 1 global ambient light and it affects every Drawable
+// object.
+uniform AmbientLight global_ambient_light;
 
 vec3 calculate_point_light(PointLight light, sampler2D tex, vec2 tex_coords, vec2 frag_pos) {
   vec3 ambient = vec3(light.ambient);
@@ -75,5 +84,10 @@ vec3 calculate_point_light(PointLight light, sampler2D tex, vec2 tex_coords, vec
   diffuse *= att;
 
   return ambient + diffuse;
-})" \
+}
+
+vec4 calculate_ambient_light(AmbientLight light) {
+  return light.color;
+}
+)" \
 fre2d_newline

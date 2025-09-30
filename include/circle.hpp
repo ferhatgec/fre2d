@@ -49,7 +49,7 @@ uniform sampler2D TextureSampler;
 uniform bool UseTexture;
 uniform float Thickness;
 )"
-fre2d_default_point_light_fragment
+fre2d_default_lighting_fragment
 fre2d_default_color_func
 R"(
 void main() {
@@ -60,10 +60,13 @@ void main() {
     discard;
   }
 
-  FragColor = default_color;
+  FragColor = calculate_ambient_light(global_ambient_light);
+
   for(int i = 0; i < point_lights.length(); i++) {
     FragColor += vec4(calculate_point_light(point_lights[i], TextureSampler, TexCoords, FragPos), default_color.a);
   }
+
+  FragColor *= default_color;
 }
 )";
 } // namespace fre2d::detail::circle

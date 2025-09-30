@@ -54,14 +54,15 @@ out vec4 Color;
 uniform sampler2D Text;
 uniform vec4 TextColor;
 )"
-fre2d_default_point_light_fragment
+fre2d_default_lighting_fragment
 R"(
 void main() {
   vec4 sampled = vec4(1.f, 1.f, 1.f, texture(Text, TexCoords).r);
-  Color = TextColor * attr_TextColor * sampled;
+  Color = calculate_ambient_light(global_ambient_light);
   for(int i = 0; i < point_lights.length(); i++) {
     Color += vec4(calculate_point_light(point_lights[i], Text, TexCoords, FragPos), sampled.a);
   }
+  Color *= TextColor * attr_TextColor * sampled;
 }
 )";
 } // namespace fer2d::detail::label
