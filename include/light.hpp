@@ -8,9 +8,18 @@
 #include <glm/glm.hpp>
 
 namespace fre2d {
-namespace detail::light {
-static constexpr auto default_ambient_light = glm::vec4(1.f, 1.f, 1.f, 1.f);
-} // namespace fre2d::detail::light
+namespace detail::ambient_light {
+static constexpr auto default_color = glm::vec4 { 1.f, 1.f, 1.f, 1.f };
+} // namespace fre2d::detail::ambient_light
+
+namespace detail::point_light {
+// just dummy values (for fresh), you should set it at your own for better results.
+static constexpr auto default_ambient = glm::vec3 { 1.f, 1.f, 1.f };
+static constexpr auto default_diffuse = glm::vec3 { 0.f, 0.f, 0.f };
+static constexpr auto default_att_constant = 0.f;
+static constexpr auto default_att_linear = 0.009f;
+static constexpr auto default_att_quadratic = 0.00032f;
+} // namespace fre2d::detail::point_light
 
 // TODO: implement AmbientLight and DirectionalLight.
 class PointLight {
@@ -66,7 +75,7 @@ private:
 
 class AmbientLight {
 public:
-  AmbientLight(glm::vec4 color = detail::light::default_ambient_light)
+  AmbientLight(glm::vec4 color = detail::ambient_light::default_color)
       : _color{color}
   {}
 
