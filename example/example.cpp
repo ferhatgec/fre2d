@@ -326,6 +326,18 @@ void window_key_process(GLFWwindow* window) {
     renderer->get_light_manager()->get_ambient_light_mutable().set_color(
         glm::vec4(0.f, 0.f, 0.f, 1.f)
     );
+
+  if(glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+    renderer->get_light_manager()->get_point_light_mutable(
+        renderer->get_light_manager()->get_point_lights().size() - 1
+        ).set_disabled(true);
+  }
+
+  if(glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+    renderer->get_light_manager()->get_point_light_mutable(
+                                     renderer->get_light_manager()->get_point_lights().size() - 1
+                                     ).set_disabled(false);
+  }
 }
 
 void window_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

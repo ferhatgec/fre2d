@@ -52,7 +52,7 @@ struct PointLight {
   float linear;
   float quadratic;
 
-  bool update; // dummy
+  bool disabled; // used in fresh to not calculate lighting
 };
 
 struct AmbientLight {

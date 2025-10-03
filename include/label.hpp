@@ -60,7 +60,11 @@ void main() {
   vec4 sampled = vec4(1.f, 1.f, 1.f, texture(Text, TexCoords).r);
   Color = calculate_ambient_light(global_ambient_light);
   for(int i = 0; i < point_lights.length(); i++) {
-    Color += vec4(calculate_point_light(point_lights[i], Text, TexCoords, FragPos), sampled.a);
+    Color += mix(
+      vec4(calculate_point_light(point_lights[i], Text, TexCoords, FragPos), sampled.a),
+      vec4(0.f, 0.f, 0.f, 0.f),
+      float(point_lights[i].disabled)
+    );
   }
   Color *= TextColor * attr_TextColor * sampled;
 }

@@ -58,7 +58,11 @@ void main() {
 
   FragColor = calculate_ambient_light(global_ambient_light);
   for(int i = 0; i < point_lights.length(); i++) {
-    FragColor += vec4(calculate_point_light(point_lights[i], TextureSampler, TexCoords, FragPos), default_color.a);
+    FragColor += mix(
+      vec4(calculate_point_light(point_lights[i], TextureSampler, TexCoords, FragPos), default_color.a),
+      vec4(0.f, 0.f, 0.f, 0.f),
+      float(point_lights[i].disabled)
+    );
   }
 
   FragColor *= default_color;

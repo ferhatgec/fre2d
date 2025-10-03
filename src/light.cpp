@@ -30,6 +30,10 @@ void PointLight::set_attenuation_quadratic(float quadratic) noexcept {
   this->_quadratic = quadratic;
 }
 
+void PointLight::set_disabled(bool disabled) noexcept {
+  this->_disabled = disabled;
+}
+
 [[nodiscard]] const glm::vec2 &PointLight::get_position() const noexcept {
   return this->_position;
 }
@@ -54,6 +58,10 @@ void PointLight::set_attenuation_quadratic(float quadratic) noexcept {
   return this->_quadratic;
 }
 
+[[nodiscard]] const int& PointLight::get_disabled() const noexcept {
+  return this->_disabled;
+}
+
 [[nodiscard]] glm::vec2 &PointLight::get_position_mutable() noexcept {
   return this->_position;
 }
@@ -76,6 +84,10 @@ void PointLight::set_attenuation_quadratic(float quadratic) noexcept {
 
 [[nodiscard]] float &PointLight::get_attenuation_quadratic_mutable() noexcept {
   return this->_quadratic;
+}
+
+[[nodiscard]] int& PointLight::get_disabled_mutable() noexcept {
+  return this->_disabled;
 }
 
 void AmbientLight::set_color(const glm::vec4& color) noexcept {
