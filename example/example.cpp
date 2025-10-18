@@ -141,7 +141,7 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
     500,
     glm::vec2(-200.f, 200.f),
     detail::drawable::default_color,
-      tex
+    tex
   );
 
   // create polygon with given vertices.
@@ -205,6 +205,8 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
           glm::vec4{1.f, 1.f, 1.f, 1.f},
       }
   );
+
+  label.set_ignore_zoom(true);
 
   // used for delta time calculation
   float last_frame { 0.0f };

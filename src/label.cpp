@@ -158,7 +158,12 @@ void Label::before_draw(const Shader &shader,
   this->_vao.bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", cam->get_view_matrix());
+  shader.set_float_mat4x4(
+    "View",
+    this->get_ignore_zoom() ?
+    cam->get_view_matrix_no_zoom() :
+    cam->get_view_matrix()
+  );
   shader.set_float_mat4x4("Projection", cam->get_projection_matrix());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);

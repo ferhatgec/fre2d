@@ -21,6 +21,7 @@ static constexpr glm::vec3 default_scale { 1.f, 1.f, 1.f };
 static constexpr glm::vec4 default_color { 1.f, 1.f, 1.f, 1.f };
 static constexpr bool default_flip_vertically { false };
 static constexpr bool default_flip_horizontally { false };
+static constexpr bool default_ignore_zoom { false };
 } // namespace fre2d::detail::drawable
 
 class Camera;
@@ -74,6 +75,9 @@ public:
     bool flip_horizontally = detail::drawable::default_flip_vertically
   ) noexcept;
 
+  void set_ignore_zoom(bool ignore_zoom) noexcept;
+  [[nodiscard]] bool get_ignore_zoom() const noexcept;
+
   virtual void draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept = 0;
   virtual void before_draw(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept; // set uniforms, including camera matrices
   virtual void before_draw_custom(const Shader& shader, const std::unique_ptr<Renderer>& rnd) noexcept;
@@ -90,5 +94,6 @@ protected:
   glm::vec2 _relative_pos;
   bool _model_matrix_update_required;
   bool _flip_vertically, _flip_horizontally;
+  bool _ignore_zoom;
 };
 } // namespace fre2d

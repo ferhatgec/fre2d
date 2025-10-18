@@ -35,6 +35,7 @@ public:
 
   [[nodiscard]] const glm::mat4& get_projection_matrix() const noexcept;
   [[nodiscard]] glm::mat4 get_view_matrix() const noexcept;
+  [[nodiscard]] glm::mat4 get_view_matrix_no_zoom() const noexcept;
   [[nodiscard]] const glm::vec3& get_camera_position() const noexcept;
   [[nodiscard]] const GLfloat& get_zoom_factor() const noexcept;
 
@@ -43,7 +44,7 @@ public:
   void update_projection_matrix() noexcept;
 private:
   glm::mat4 _projection;
-  glm::mat4 _view;
+  glm::mat4 _view, _view_nz;
   glm::vec3 _position;
   GLfloat _zoom_factor;
   GLfloat _width;

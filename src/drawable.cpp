@@ -16,6 +16,7 @@ Drawable::Drawable() noexcept
     _scale{detail::drawable::default_scale},
     _rotation_rads{detail::drawable::default_rotation_radians},
     _model_matrix_update_required{true},
+    _ignore_zoom{detail::drawable::default_ignore_zoom},
     _flip_vertically{detail::drawable::default_flip_vertically},
     _flip_horizontally{detail::drawable::default_flip_horizontally},
     _relative_pos{0.f, 0.f} {
@@ -159,6 +160,14 @@ void Drawable::initialize_drawable(
   this->_flip_horizontally = flip_horizontally;
 }
 
+void Drawable::set_ignore_zoom(bool ignore_zoom) noexcept {
+  this->_ignore_zoom = ignore_zoom;
+}
+
+[[nodiscard]] bool Drawable::get_ignore_zoom() const noexcept {
+  return this->_ignore_zoom;
+}
+
 // sets shader uniforms
 void Drawable::before_draw(const Shader& shader,
                            const std::unique_ptr<Renderer>& rnd) noexcept {
@@ -173,7 +182,12 @@ void Drawable::before_draw(const Shader &shader,
   this->get_mesh().get_vao().bind();
   shader.use();
   shader.set_float_mat4x4("Model", this->get_model_matrix());
-  shader.set_float_mat4x4("View", cam->get_view_matrix());
+  shader.set_float_mat4x4(
+    "View",
+    this->get_ignore_zoom() ?
+    cam->get_view_matrix_no_zoom() :
+    cam->get_view_matrix()
+  );
   shader.set_float_mat4x4("Projection", cam->get_projection_matrix());
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
   shader.set_bool("FlipVertically", this->_flip_vertically);

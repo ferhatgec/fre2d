@@ -69,6 +69,14 @@ void Camera::rotate_camera(GLfloat radians) noexcept {
   ), glm::vec3(this->_zoom_factor, this->_zoom_factor, 1.f));
 }
 
+[[nodiscard]] glm::mat4 Camera::get_view_matrix_no_zoom() const noexcept {
+  return glm::scale(glm::lookAt(
+    this->_position,
+    this->_position + detail::camera::front_vec,
+    detail::camera::up_vec
+  ), glm::vec3(1.f, 1.f, 1.f));
+}
+
 [[nodiscard]] const glm::vec3& Camera::get_camera_position() const noexcept {
   return this->_position;
 }
