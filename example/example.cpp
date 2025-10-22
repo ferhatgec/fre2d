@@ -207,6 +207,7 @@ FragColor = texture(SecondaryTexture, TexCoords) * texture(ScreenTexture, TexCoo
   );
 
   label.set_ignore_zoom(true);
+  label.set_affected_by_light(false);
 
   // used for delta time calculation
   float last_frame { 0.0f };

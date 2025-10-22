@@ -71,6 +71,10 @@ void Drawable::set_flip_horizontally(bool flip_horizontally) noexcept {
   this->_flip_horizontally = flip_horizontally;
 }
 
+void Drawable::set_affected_by_light(bool affected_by_light) noexcept {
+  this->_affected_by_light = affected_by_light;
+}
+
 [[nodiscard]] const glm::vec2& Drawable::get_position() const noexcept {
   return this->_position;
 }
@@ -128,6 +132,10 @@ void Drawable::set_flip_horizontally(bool flip_horizontally) noexcept {
     this->_model_matrix_update_required = false;
   }
   return this->_model;
+}
+
+[[nodiscard]] const bool& Drawable::get_affected_by_light() const noexcept {
+  return this->_affected_by_light;
 }
 
 [[nodiscard]] glm::mat4
@@ -192,6 +200,7 @@ void Drawable::before_draw(const Shader &shader,
   shader.set_bool("UseTexture", this->get_mesh().get_texture().has_value());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
+  shader.set_bool("AffectedByLight", this->_affected_by_light);
   this->before_draw_custom(shader, cam, lm);
   lm->get_point_lights_ssbo().bind();
   lm->update_buffers();

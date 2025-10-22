@@ -22,6 +22,7 @@ static constexpr glm::vec4 default_color { 1.f, 1.f, 1.f, 1.f };
 static constexpr bool default_flip_vertically { false };
 static constexpr bool default_flip_horizontally { false };
 static constexpr bool default_ignore_zoom { false };
+static constexpr bool default_affected_by_light { true };
 } // namespace fre2d::detail::drawable
 
 class Camera;
@@ -45,6 +46,7 @@ public:
   void set_scale(const glm::vec3& scale) noexcept;
   void set_flip_vertically(bool flip_vertically) noexcept;
   void set_flip_horizontally(bool flip_horizontally) noexcept;
+  void set_affected_by_light(bool affected_by_light) noexcept;
 
   [[nodiscard]] const glm::vec2& get_position() const noexcept;
   [[nodiscard]] const glm::vec3& get_scale() const noexcept;
@@ -64,6 +66,7 @@ public:
     const glm::vec2& position = detail::drawable::default_position,
     GLfloat rotation_rads = detail::drawable::default_rotation_radians
   ) noexcept;
+  [[nodiscard]] const bool& get_affected_by_light() const noexcept;
 
   [[nodiscard]] const bool& is_matrix_update_required() const noexcept;
 
@@ -95,5 +98,6 @@ protected:
   bool _model_matrix_update_required;
   bool _flip_vertically, _flip_horizontally;
   bool _ignore_zoom;
+  bool _affected_by_light;
 };
 } // namespace fre2d

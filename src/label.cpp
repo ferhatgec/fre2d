@@ -167,6 +167,7 @@ void Label::before_draw(const Shader &shader,
   shader.set_float_mat4x4("Projection", cam->get_projection_matrix());
   shader.set_bool("FlipVertically", this->_flip_vertically);
   shader.set_bool("FlipHorizontally", this->_flip_horizontally);
+  shader.set_bool("AffectedByLight", this->_affected_by_light);
   lm->get_point_lights_ssbo().bind();
   lm->update_buffers();
   shader.set_float_vec4("global_ambient_light.color", lm->get_ambient_light().get_color());

@@ -47,24 +47,28 @@ out vec4 FragColor;
 
 uniform sampler2D TextureSampler;
 uniform bool UseTexture;
+uniform bool AffectedByLight;
 )"
 fre2d_default_lighting_fragment
 fre2d_default_color_func
+fre2d_default_point_lights_blend_func
 R"(
 void main() {
   vec4 default_color = calculate_color(Color, TextureSampler, TexCoords, UseTexture);
   /* if UseTexture = 0.f, it will return Color.
      if UseTexture = 1.f, then it will return Color * texture(TextureSampler, TexCoords) */
 
-  FragColor = calculate_ambient_light(global_ambient_light);
-  for(int i = 0; i < point_lights.length(); i++) {
-    FragColor += mix(
-      vec4(calculate_point_light(point_lights[i], TextureSampler, TexCoords, FragPos), default_color.a),
-      vec4(0.f, 0.f, 0.f, 0.f),
-      float(point_lights[i].disabled)
-    );
-  }
-
+  FragColor = mix(
+    point_lights_blend_func(
+      calculate_ambient_light(global_ambient_light),
+      default_color.a,
+      TextureSampler,
+      TexCoords,
+      FragPos
+    ),
+    vec4(1.f, 1.f, 1.f, 1.f),
+    1.f - float(AffectedByLight)
+  );
   FragColor *= default_color;
 })";
 

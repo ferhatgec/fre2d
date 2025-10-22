@@ -42,6 +42,20 @@ vec4 calculate_color(vec4 color, sampler2D tex, vec2 tex_coords, bool use_textur
 )" \
 fre2d_newline
 
+#define fre2d_default_point_lights_blend_func R"(
+vec4 point_lights_blend_func(vec4 Color, float alpha_ch, sampler2D tex, vec2 tex_coords, vec2 frag_pos) {
+  for(int i = 0; i < point_lights.length(); i++) {
+    Color += mix(
+      vec4(calculate_point_light(point_lights[i], tex, tex_coords, frag_pos), alpha_ch),
+      vec4(0.f, 0.f, 0.f, 0.f),
+      float(point_lights[i].disabled)
+    );
+  }
+  return Color;
+}
+)" \
+fre2d_newline
+
 #define fre2d_default_lighting_fragment  R"(
 struct PointLight {
   vec2 pos;

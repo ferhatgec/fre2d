@@ -1,0 +1,6 @@
+BasedOnStyle: Chromium
+IndentWidth: 2
+MaxEmptyLinesToKeep: 1
+TabWidth: 2
+UseTab: Never
+SpaceBeforeParens: Never
